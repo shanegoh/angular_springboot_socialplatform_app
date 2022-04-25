@@ -1,6 +1,5 @@
 package com.dxc.production.mimi.model.response;
 
-import com.dxc.production.mimi.dto.PostDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;

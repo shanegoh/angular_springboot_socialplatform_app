@@ -1,12 +1,11 @@
 package com.dxc.production.mimi.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class PostDto {
+public class PostDTO {
     private long id;
     private String username;
     private String name;

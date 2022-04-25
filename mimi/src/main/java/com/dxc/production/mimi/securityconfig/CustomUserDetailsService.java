@@ -2,6 +2,7 @@ package com.dxc.production.mimi.securityconfig;
 
 import com.dxc.production.mimi.dao.UserRepo;
 import com.dxc.production.mimi.enumerate.Role;
+import com.dxc.production.mimi.enumerate.Status;
 import com.dxc.production.mimi.model.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         List<SimpleGrantedAuthority> roles = null;
 
         UserEntity user = userRepo.findByUsername(username);
-        if (user != null) {
+        if (user != null && user.getDeleteFlag() == Status.AVAILABLE.getValue()) {
             roles = Arrays.asList(new SimpleGrantedAuthority(Role.valueToRole(user.getRole()).name())); // Assign Roles based on role integer
             return new User(user.getUsername(), user.getPassword(), roles);
         }
