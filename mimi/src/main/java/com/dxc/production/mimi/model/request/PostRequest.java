@@ -1,12 +1,14 @@
 package com.dxc.production.mimi.model.request;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class AuthenticationRequest {
+public class PostRequest {
+    private String caption;
+    private String hyperLink;
+    private String mediaLink;
     private String username;
-    private String password;
+    private String name;
 }

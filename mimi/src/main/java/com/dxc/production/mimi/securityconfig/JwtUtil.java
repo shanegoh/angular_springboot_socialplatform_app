@@ -1,7 +1,10 @@
 package com.dxc.production.mimi.securityconfig;
 
+import com.dxc.production.mimi.dao.UserRepo;
+import com.dxc.production.mimi.service.UserServiceInterface;
 import io.jsonwebtoken.*;
 import com.dxc.production.mimi.enumerate.Role;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -33,6 +36,7 @@ public class JwtUtil {
         if (roles.contains(new SimpleGrantedAuthority(Role.USER.name()))) {
             claims.put("isAdmin", false);
         }
+
         return doGenerateToken(claims, userDetails.getUsername());
     }
 

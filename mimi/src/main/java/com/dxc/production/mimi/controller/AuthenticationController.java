@@ -25,14 +25,14 @@ public class AuthenticationController {
     private UserServiceInterface userServiceInterface;
 
     @PostMapping("/authenticate")
-    public ResponseEntity createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest)
+    public ResponseEntity authentication(@RequestBody AuthenticationRequest authenticationRequest)
             throws Exception {
         GenericResponseInterface genericResponseInterface = userServiceInterface.getJwt(authenticationRequest);
         return new ResponseEntity<>(genericResponseInterface, genericResponseInterface.getHttpStatus());
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<?> attemptLogout (HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity attemptLogout (HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null){
             new SecurityContextLogoutHandler().logout(request, response, auth);

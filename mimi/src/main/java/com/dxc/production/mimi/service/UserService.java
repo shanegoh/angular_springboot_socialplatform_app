@@ -1,13 +1,13 @@
 package com.dxc.production.mimi.service;
 
+import com.dxc.production.mimi.model.request.RegistrationRequest;
+import com.dxc.production.mimi.model.response.*;
 import com.dxc.production.mimi.securityconfig.CustomUserDetailsService;
 import com.dxc.production.mimi.securityconfig.JwtUtil;
 import com.dxc.production.mimi.dao.UserRepo;
 import com.dxc.production.mimi.dto.UserDto;
 import com.dxc.production.mimi.model.UserEntity;
 import com.dxc.production.mimi.model.request.AuthenticationRequest;
-import com.dxc.production.mimi.model.response.AuthenticationResponse;
-import com.dxc.production.mimi.model.response.RegistrationResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,11 +16,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 @Service
@@ -48,22 +50,22 @@ public class UserService implements UserServiceInterface {
                 .getAuthentication()
                 .getPrincipal();
         UserEntity userEntity = userRepo.findByUsername(userDetails.getUsername());
-        UserDto returnValue = new UserDto();
-        BeanUtils.copyProperties(userEntity, returnValue);
+        UserDto userDto = new UserDto();
+        BeanUtils.copyProperties(userEntity,userDto);
 
-        return returnValue;
+        return userDto;
     }
 
     @Override
-    public AuthenticationResponse getJwt(AuthenticationRequest authenticationRequest) throws Exception {
+    public GenericResponse getJwt(AuthenticationRequest authenticationRequest) throws Exception {
         try {
             // Since we are using username and password we then use UsernamePassword authentication token
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getUsername(), authenticationRequest.getPassword()));
         } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
+            return new AuthenticationErrorResponse("Account has been disabled. Please contact administrator.", HttpStatus.UNAUTHORIZED);
         } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
+            return new AuthenticationErrorResponse("Invalid username or password.", HttpStatus.UNAUTHORIZED);
         }
         // Verify the existence of the user from database
         UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
@@ -73,54 +75,55 @@ public class UserService implements UserServiceInterface {
         return new AuthenticationResponse("Successfully retrieve token.", HttpStatus.OK, token);
     }
 
-    private void authenticate(String username, String password) throws Exception {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        } catch (DisabledException e) {
-            throw new Exception("USER_DISABLED", e);
-        } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
-        }
-    }
-
     @Override
-    public RegistrationResponse registerUser(UserDto user) {
+    public GenericResponse registerUser(RegistrationRequest registrationRequest) {
+        // Pull from database and check if the username exist of not
+        UserEntity userEntity = userRepo.findByUsername(registrationRequest.getUsername().trim().toLowerCase());
+        // Show response when username is found
+        if (Objects.nonNull(userEntity)) {
+            return new GenericResponse("Username exist, please try another.", HttpStatus.CONFLICT);
+        }
+
+        // Start to validate all information
         StringBuilder errorMessage = new StringBuilder();
-        boolean registrationResult = validateRegistrationUser(user, errorMessage);
+        boolean registrationResult = validateRegistrationUser(registrationRequest, errorMessage);
 
         // If validation success, proceed to add
-        if(registrationResult) {
+        if (registrationResult) {
             UserEntity newUser = new UserEntity();
-            newUser.setUsername(user.getUsername().toLowerCase());
-            newUser.setName(user.getName());
-            newUser.setRole(user.getRole());
-            newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+            newUser.setUsername(registrationRequest.getUsername().toLowerCase());
+            newUser.setName(registrationRequest.getName());
+            newUser.setRole(registrationRequest.getRole());
+            newUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
+            newUser.setCreatedBy(registrationRequest.getUsername().toLowerCase());
+            newUser.setLastModifiedBy(registrationRequest.getUsername().toLowerCase());
             try {
                 userRepo.save(newUser);
-                return new RegistrationResponse("Successfully created user.", HttpStatus.CREATED);
+                return new GenericResponse("Successfully created user.", HttpStatus.CREATED);
             } catch (Exception e) {
-                return new RegistrationResponse("Error. Failed to create user.", HttpStatus.BAD_REQUEST);
+                return new GenericResponse("Unable to create. Please try again later.", HttpStatus.BAD_REQUEST);
             }
         } else {
-            return new RegistrationResponse(errorMessage.toString(), HttpStatus.BAD_REQUEST);
+            return new GenericResponse(errorMessage.toString(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    public boolean validateRegistrationUser(UserDto user, StringBuilder errorMessage) {
+    // Helper method to do validation
+    private boolean validateRegistrationUser(RegistrationRequest request, StringBuilder errorMessage) {
         // Check username, name, role and password
-        if (StringUtils.hasText(user.getUsername())
-                && StringUtils.hasText(user.getName())
-                && (user.getRole() == 0 || user.getRole() == 1)
-                && StringUtils.hasText(user.getPassword())) {
+        if (StringUtils.hasText(request.getUsername())
+                && StringUtils.hasText(request.getName())
+                && (request.getRole() == 0 || request.getRole() == 1)
+                && StringUtils.hasText(request.getPassword())) {
 
             // Only allow digit, underscore and alphabets
-            boolean validateUsername = Pattern.matches("[\\w]+", user.getUsername());
+            boolean validateUsername = Pattern.matches("[\\w]+", request.getUsername());
 
             // Only allow alphabets
-            boolean validateName = Pattern.matches("[a-z]+", user.getName());
+            boolean validateName = Pattern.matches("[a-z ]+", request.getName());
 
             // Should include 1 lower case & 1 upper case alphabet,  1 digit, and at least 1 of (@,#,$,%) -> Min length of 8, Max 16
-            boolean validatePassword = Pattern.matches("^(?=(.*[0-9])+)(?=(.*[a-z])+)(?=(.*[A-Z])+)(?=(.*[@#$%])+).{8,16}$", user.getPassword());
+            boolean validatePassword = Pattern.matches("^(?=(.*[0-9])+)(?=(.*[a-z])+)(?=(.*[A-Z])+)(?=(.*[@#$%])+).{8,16}$", request.getPassword());
             if (!validateUsername) {
                 errorMessage.append("Invalid Username: Only digit, underscore and alphabets allowed. ");
             }
@@ -130,8 +133,8 @@ public class UserService implements UserServiceInterface {
             }
 
             if (!validatePassword) {
-                errorMessage.append("Invalid Password: Must include 1 lower case and 1 upper case alphabet, "
-                                                                        + "1 digit and 1 special characters (@#$%). ");
+                errorMessage.append("Invalid Password: Must include at least 1 lower case and 1 upper case alphabet, "
+                        + "1 digit and 1 of special characters (@#$%). ");
             }
             return (validateUsername && validateName && validatePassword);
         } else {

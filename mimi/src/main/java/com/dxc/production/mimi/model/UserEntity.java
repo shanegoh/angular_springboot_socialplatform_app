@@ -2,19 +2,13 @@ package com.dxc.production.mimi.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "user")
-@EntityListeners(AuditingEntityListener.class)
-public class UserEntity {
+public class UserEntity extends Auditable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,11 +26,6 @@ public class UserEntity {
     @Column(nullable = false, length = 60)
     private String password;
 
-    @Column
-    @CreatedDate
-    private Date createdDate;
-
-    @Column
-    @LastModifiedDate
-    private Date lastModifiedDate;
+    @Column(nullable = false)
+    private int deleteFlag;
 }
