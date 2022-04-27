@@ -1,5 +1,8 @@
 package com.dxc.production.mimi.service;
 
+import com.dxc.production.mimi.dto.RegistrationErrorDTO;
+import com.dxc.production.mimi.enumerate.Message;
+import com.dxc.production.mimi.enumerate.Role;
 import com.dxc.production.mimi.enumerate.Status;
 import com.dxc.production.mimi.model.request.RegistrationRequest;
 import com.dxc.production.mimi.model.response.*;
@@ -79,15 +82,23 @@ public class UserService implements UserServiceInterface {
     @Override
     public GenericResponse registerUser(RegistrationRequest registrationRequest) {
         // Pull from database and check if the username exist of not
-        UserEntity userEntity = userRepo.findByUsername(registrationRequest.getUsername().trim().toLowerCase());
-        // Show response when username is found
-        if (Objects.nonNull(userEntity)) {
-            return new GenericResponse("Username exist, please try another.", HttpStatus.CONFLICT);
-        }
+        UserEntity checkUsernameExist = userRepo.findByUsername(registrationRequest.getUsername().trim().toLowerCase());
+        UserEntity checkEmailExist = userRepo.findByEmail(registrationRequest.getEmail().trim().toLowerCase());
+        RegistrationErrorDTO registrationErrorDTO = new RegistrationErrorDTO();
 
+        if (Objects.nonNull(checkUsernameExist) && Objects.nonNull(checkEmailExist)) {
+            registrationErrorDTO.setUsernameErrorMsg(Message.USERNAME_EXIST.getMessage());
+            registrationErrorDTO.setEmailErrorMsg(Message.EMAIL_EXIST.getMessage());
+            return new RegistrationResponse("Username and email exist, please try another.", HttpStatus.CONFLICT, registrationErrorDTO);
+        } else if (Objects.nonNull(checkUsernameExist)) {  // Show response when username is exist
+            registrationErrorDTO.setUsernameErrorMsg(Message.USERNAME_EXIST.getMessage());
+            return new RegistrationResponse("Username exist, please try another.", HttpStatus.CONFLICT, registrationErrorDTO);
+        } else if (Objects.nonNull(checkEmailExist)) {  // Show response when email is exist
+            registrationErrorDTO.setEmailErrorMsg(Message.EMAIL_EXIST.getMessage());
+            return new RegistrationResponse("Email exist, please try another.", HttpStatus.CONFLICT,registrationErrorDTO);
+        }
         // Start to validate all information
-        StringBuilder errorMessage = new StringBuilder();
-        boolean registrationResult = validateRegistrationUser(registrationRequest, errorMessage);
+        boolean registrationResult = validateRegistrationUser(registrationRequest, registrationErrorDTO);
 
         // If validation success, proceed to add
         if (registrationResult) {
@@ -95,7 +106,8 @@ public class UserService implements UserServiceInterface {
                 UserEntity newUser = new UserEntity();
                 newUser.setUsername(registrationRequest.getUsername().toLowerCase());
                 newUser.setName(registrationRequest.getName());
-                newUser.setRole(registrationRequest.getRole());
+                newUser.setRole(Role.USER.getValue());
+                newUser.setEmail(registrationRequest.getEmail());
                 newUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
                 newUser.setCreatedBy(registrationRequest.getUsername().toLowerCase());
                 newUser.setLastModifiedBy(registrationRequest.getUsername().toLowerCase());
@@ -105,7 +117,7 @@ public class UserService implements UserServiceInterface {
                 return new GenericResponse("Unable to create. Please try again later.", HttpStatus.BAD_REQUEST);
             }
         } else {
-            return new GenericResponse(errorMessage.toString(), HttpStatus.BAD_REQUEST);
+            return new RegistrationResponse("Multiple Invalid Fields", HttpStatus.CONFLICT,registrationErrorDTO);
         }
     }
 
@@ -124,12 +136,12 @@ public class UserService implements UserServiceInterface {
     }
 
     // Helper method to do validation
-    private boolean validateRegistrationUser(RegistrationRequest request, StringBuilder errorMessage) {
+    private boolean validateRegistrationUser(RegistrationRequest request, RegistrationErrorDTO registrationErrorDTO) {
         // Check username, name, role and password
         if (StringUtils.hasText(request.getUsername())
                 && StringUtils.hasText(request.getName())
-                && (request.getRole() == 0 || request.getRole() == 1)
-                && StringUtils.hasText(request.getPassword())) {
+                && StringUtils.hasText(request.getPassword())
+                && StringUtils.hasText(request.getEmail())) {
 
             // Only allow digit, underscore and alphabets
             boolean validateUsername = Pattern.matches("[\\w]+", request.getUsername());
@@ -139,23 +151,27 @@ public class UserService implements UserServiceInterface {
 
             // Should include 1 lower case & 1 upper case alphabet,
             // 1 digit, and at least 1 of (@,#,$,%) -> Min length of 8, Max 16
-            boolean validatePassword = Pattern.matches("^(?=(.*[0-9])+)"
-                                        + "(?=(.*[a-z])+)(?=(.*[A-Z])+)(?=(.*[@#$%])+).{8,16}$", request.getPassword());
+            boolean validatePassword = Pattern.matches("^(?=(.*[0-9])+)(?=(.*[a-z])+)(?=(.*[A-Z])+)(?=(.*[@#$%])+).{8,16}$", request.getPassword());
+
+            boolean validateEmail = Pattern.matches("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", request.getEmail());
+
             if (!validateUsername) {
-                errorMessage.append("Invalid Username: Only digit, underscore and alphabets allowed. ");
+                registrationErrorDTO.setUsernameErrorMsg(Message.USERNAME_INVALID.getMessage());
             }
 
             if (!validateName) {
-                errorMessage.append("Invalid Name: Only alphabets allowed. ");
+                registrationErrorDTO.setNameErrorMsg(Message.NAME_INVALID.getMessage());
             }
 
             if (!validatePassword) {
-                errorMessage.append("Invalid Password: Must include at least 1 lower case and 1 upper case alphabet, "
-                        + "1 digit and 1 of special characters (@#$%). ");
+                registrationErrorDTO.setPasswordErrorMsg(Message.PASSWORD_INVALID.getMessage());
             }
+
+            if (!validateEmail) {
+                registrationErrorDTO.setEmailErrorMsg(Message.EMAIL_INVALID.getMessage());
+            }
+
             return (validateUsername && validateName && validatePassword);
-        } else {
-            errorMessage.append("Error. Please ensure that all fields are filled up.");
         }
         return false;
     }

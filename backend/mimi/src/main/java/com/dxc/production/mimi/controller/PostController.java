@@ -31,7 +31,7 @@ public class PostController {
     }
 
     // User Only -> API TESTED
-    @PutMapping("/user/postContent")
+    @PostMapping("/user/postContent")
     public ResponseEntity postContent(@RequestPart(value = "media", required = false) MultipartFile multipartFile,
                                       @RequestPart("body") PostRequest postRequest) {
         // Set username and name

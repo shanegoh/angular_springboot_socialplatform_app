@@ -9,5 +9,6 @@ public class RegistrationRequest {
     private String username;
     private String password;
     private String name;
+    private String email;
     private int role;
 }

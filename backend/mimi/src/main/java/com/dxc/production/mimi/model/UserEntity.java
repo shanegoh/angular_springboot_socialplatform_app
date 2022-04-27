@@ -26,6 +26,9 @@ public class UserEntity extends Auditable{
     @Column(nullable = false, length = 60)
     private String password;
 
+    @Column(nullable = false, length = 50, unique = true)
+    private String email;
+
     @Column(nullable = false)
     private int deleteFlag;
 }
