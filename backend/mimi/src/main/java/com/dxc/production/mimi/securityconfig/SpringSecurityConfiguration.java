@@ -43,7 +43,7 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-                .cors().and().csrf().disable()
+                .cors().and().csrf().disable().headers().and()
                 .authorizeRequests()
                 .antMatchers("/api/post/admin/**").hasAuthority(Role.ADMIN.name())
                 .antMatchers("/api/post/user/**").hasAuthority(Role.USER.name())

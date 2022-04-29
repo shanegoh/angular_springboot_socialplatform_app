@@ -2,14 +2,15 @@ package com.dxc.production.mimi.controller;
 
 import com.dxc.production.mimi.model.request.PostRequest;
 import com.dxc.production.mimi.model.response.GenericResponseInterface;
+import com.dxc.production.mimi.service.FileStorageServiceInterface;
 import com.dxc.production.mimi.service.PostServiceInterface;
 import com.dxc.production.mimi.service.UserServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 // REST API
 @RestController
@@ -22,6 +23,9 @@ public class PostController {
 
     @Autowired
     private PostServiceInterface postServiceInterface;
+
+    @Autowired
+    private FileStorageServiceInterface fileStorageServiceInterface;
 
     // User Only -> API TESTED
     @GetMapping("/user/getAllPost/page/{page-number}")
@@ -82,6 +86,13 @@ public class PostController {
         String username = userServiceInterface.getUserInformation().getUsername();
         GenericResponseInterface genericResponseInterface = userServiceInterface
                 .updateAccountStatusById(id, username, status);
+        return new ResponseEntity<>(genericResponseInterface, genericResponseInterface.getHttpStatus());
+    }
+
+    // USER -> API TEST OK
+    @GetMapping("/stream/uploads/{url}")
+    public ResponseEntity stream(@PathVariable("url") String url) throws IOException {
+        GenericResponseInterface genericResponseInterface = fileStorageServiceInterface.streamMedia(url);
         return new ResponseEntity<>(genericResponseInterface, genericResponseInterface.getHttpStatus());
     }
 }

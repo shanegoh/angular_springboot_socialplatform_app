@@ -1,0 +1,7 @@
+.addPostBtn {
+    position: fixed;
+    float: right;
+    top: 85%;
+    right: 5%;
+    z-index: 1;
+}

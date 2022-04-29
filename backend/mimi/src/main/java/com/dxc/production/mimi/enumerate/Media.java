@@ -4,7 +4,7 @@ public enum Media {
     PNG(".png", "image/png"),
     JPEG(".jpeg", "image/jpeg"),
     JPG(".jpg", "image/jpg"),
-    MP4("./MP4" , "video/mp4");
+    MP4(".MP4" , "video/mp4");
 
     private String type;
     private String format;

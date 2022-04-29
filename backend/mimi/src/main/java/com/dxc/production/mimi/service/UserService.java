@@ -29,7 +29,6 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 @Service
-@Transactional
 public class UserService implements UserServiceInterface {
 
     @Autowired

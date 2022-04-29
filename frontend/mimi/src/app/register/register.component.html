@@ -1,7 +1,6 @@
 <div class="container">
     <div class="form-group mb-4 h1 text-center">Registration</div>
-    
-    <form  (ngSubmit)="onSubmitRegister()" ngNativeValidate  >
+    <form (ngSubmit)="onSubmitRegister()" ngNativeValidate  >
         <div class="form-group mb-3">
             <label for="email">Email address</label>
             <input type="email" required class="form-control" id="email" name="email" placeholder="Email Address" [(ngModel)]="user.email"> 
@@ -38,16 +37,16 @@
             <ng-template #show_password_error><small id="emailHelp" class="form-text text-muted" >Your password are protected.</small></ng-template>
         </div>
         <div class="form-group mb-3">
-            <small class="text-danger" *ngIf="registrationResponse?.message">{{registrationResponse?.message}}</small>
-        </div>
-        <div class="form-group mb-3">
             <button type="submit" class="btn btn-primary w-100">Register</button>
         </div>
     </form>
+    <div class="text-center">
+        <button class="btn btn-dark" (click)="goToLogin()">Already registered? Login here</button>
+    </div>
 </div>
 <div *ngIf="showPopUpMessage">
     <popup [showPopUp]="showPopUpMessage" 
             [header]="registerHeaderMsg" 
             [message]="registerMsg" 
-            (newItemEvent)="getDisplayedStatus($event)"></popup>
+            (returnStatus)="getDisplayedStatus($event)"></popup>
 </div>

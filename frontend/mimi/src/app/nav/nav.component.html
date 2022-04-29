@@ -1,0 +1,10 @@
+<div class="container">
+    <ul ngbNav #nav="ngbNav" class="nav-buttons">
+        <li ngbNavItem>
+            <a ngbNavLink>Home</a>
+            <ng-template ngbNavContent><feed></feed></ng-template>
+        </li>
+        <logout (newItemEvent)="clearStorage($event)"></logout>
+    </ul>
+    <div [ngbNavOutlet]="nav"></div>
+</div>

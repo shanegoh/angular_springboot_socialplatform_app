@@ -1,0 +1,13 @@
+<ngb-toast [autohide]="false" class="w-100 bg-dark mt-5" (click)="viewPost()">
+    <ng-template ngbToastHeader>
+        <div class="me-auto">
+            <div class="mx-1">
+                <div class="text-primary fs-3">{{content?.name}}</div>
+                <small class="text-muted">@{{content?.username}}</small>
+            </div><br>
+            <strong>{{content?.caption}}</strong>
+        </div>
+    </ng-template>
+    <object *ngIf="content?.hyperLink" width="100%" height="400" [data]="hyperLinkUrl"></object>
+    <object *ngIf="content?.mediaLink" width="100%" height="400" [data]="mediaLinkUrl"></object>
+</ngb-toast>

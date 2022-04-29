@@ -42,7 +42,7 @@ public class PostService implements PostServiceInterface {
             Pageable pageable = PageRequest.of(pageNumber - 1, 10); // Set page size
             Page<PostEntity> postEntityList = postRepo.findAllActivePost(pageable); // update created and last modified by
             if(postEntityList.isEmpty())
-                return new GenericResponse("No more records.", HttpStatus.OK);
+                return new GenericResponse("No more records.", HttpStatus.NOT_FOUND);
             // Copy to PostDTO
             for (PostEntity postEntity : postEntityList) {
                 PostDTO postDto = new PostDTO();
@@ -91,7 +91,7 @@ public class PostService implements PostServiceInterface {
             Pageable pageable = PageRequest.of(pageNumber - 1, 10); // Set page size
             Page<PostEntity> postEntityList = postRepo.findAll(pageable);       // Retrieve records for certain page
             if(postEntityList.isEmpty())
-                return new GenericResponse("No more records.", HttpStatus.OK);
+                return new GenericResponse("No more records.", HttpStatus.NOT_FOUND);
 
             return new PostResponse<>("Successfully retrieve all record(s).", HttpStatus.OK, postEntityList);
         } catch (Exception e) {

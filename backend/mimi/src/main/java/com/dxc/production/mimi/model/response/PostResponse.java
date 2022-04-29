@@ -9,10 +9,10 @@ import org.springframework.http.HttpStatus;
 @Setter
 public class PostResponse<T> extends GenericResponse{
 
-    private Page<T> postList;
+    private Page<T> pagination;
 
-    public PostResponse(String message, HttpStatus httpStatus, Page<T> postList) {
+    public PostResponse(String message, HttpStatus httpStatus, Page<T> pagination) {
         super(message, httpStatus);
-        this.postList = postList;
+        this.pagination = pagination;
     }
 }

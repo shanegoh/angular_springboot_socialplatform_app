@@ -8,18 +8,18 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 export class PopupComponent implements OnInit {
   display = "none";
 
+  // Get data from parent (register) component
   @Input() showPopUp = false
   @Input() header = ""
   @Input() message = ""
 
-  @Output() newItemEvent = new EventEmitter<boolean>();
+  @Output() returnStatus = new EventEmitter<boolean>();
 
   ngOnInit(): void {
-  }
-
-  constructor() {
     this.openModal();
   }
+
+  constructor() {}
 
   openModal() {
     this.display = "block";
@@ -27,6 +27,6 @@ export class PopupComponent implements OnInit {
 
   onCloseHandled() {
     this.display = "none";
-    this.newItemEvent.emit(true); // update parent
+    this.returnStatus.emit(true); // update parent
   }
 }

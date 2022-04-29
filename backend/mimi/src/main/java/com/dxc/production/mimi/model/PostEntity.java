@@ -26,7 +26,7 @@ public class PostEntity extends Auditable {
     @Column(length = 500)
     private String hyperLink;
 
-    @Column(length = 500)
+    @Column(length = 100)
     private String mediaLink;
 
     @Column(length = 50)

@@ -1,0 +1,8 @@
+<add-post class="addPostBtn" (updateFeedToShowForm)="updatePostFormStatus($event)"></add-post>
+<post-form *ngIf="openPostForm" (onClose)="closePostForm($event)"></post-form>
+<div class="container"> 
+    <div *ngFor="let eachContent of contentList">
+        <toast [content]="eachContent"></toast>
+    </div>
+</div>
+<button class="btn btn-primary w-100" (click)="onClickLoadNextPage($event)">Load data!</button>
