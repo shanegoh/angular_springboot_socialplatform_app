@@ -14,7 +14,19 @@ import { StreamService } from '../_services/stream.service';
 })
 export class IndividualPostComponent implements OnInit {
 
-  constructor(private route: ActivatedRoute, private postService: PostService, private streamService: StreamService, private router:Router) { }
+  // shut the modal
+  display = "none";
+
+  openModal() {
+    this.display = "block";
+  }
+
+  // Close when user close form
+  onCloseHandled() {
+    this.display = "none";
+  }
+
+  constructor(private route: ActivatedRoute, private postService: PostService, private streamService: StreamService, private router: Router) { }
 
   postResponse: PostResponse = new PostResponse();
   content: Content | undefined
@@ -23,10 +35,11 @@ export class IndividualPostComponent implements OnInit {
   mediaLinkUrl: SafeResourceUrl | undefined;
 
   @Input() individualPostId: number | undefined
-  
+
   @Output() destroyPostComponent = new EventEmitter<boolean>();
 
   ngOnInit(): void {
+    this.openModal()
     this.loadOnePost(this.individualPostId!)
   }
 
@@ -55,7 +68,7 @@ export class IndividualPostComponent implements OnInit {
         next: (fileResponse: FileResponse) => {
           var file = "data:" + fileResponse.format + ";base64," + fileResponse.file
           this.mediaLinkUrl = this.streamService.sanitizerBypass(file);
-          console.log( this.mediaLinkUrl)
+          console.log(this.mediaLinkUrl)
         },
         error: (e) => {
           console.log(e.error)
@@ -67,5 +80,6 @@ export class IndividualPostComponent implements OnInit {
   onClickClosePost() {
     console.log("clicked closed")
     this.destroyPostComponent.emit(true)
+    this.display = "none";
   }
 }
