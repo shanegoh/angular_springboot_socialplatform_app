@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { SafeResourceUrl } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { Content } from '../_models/response/content';
 import { GenericResponse } from '../_models/response/generic-response';
 import { PostPagination } from '../_models/response/post-pagination';
@@ -22,7 +24,18 @@ export class FeedComponent implements OnInit {
   // Data used by the ngIf to display the child component (postForm)
   openPostForm = false; 
 
-  constructor(private postService: PostService) { }
+  // Data used by the ngIf to display the notification after post creation
+  showNotification = false;
+
+  // Send return message from server to notification
+  notificationMessage: string | undefined
+
+  // Get the post id when user clicked
+  postId: number | undefined;
+
+  showIndividualPost = true;
+
+  constructor(private router: Router, private postService: PostService) { }
 
   ngOnInit(): void {
     this.getPaginationData()
@@ -33,8 +46,11 @@ export class FeedComponent implements OnInit {
     // Disable button on click on the final page
     if(this.totalPages !== undefined && this.pageNumber >= this.totalPages - 1)
       (event.target as HTMLButtonElement).hidden = true;
-
     this.getPaginationData()
+  }
+
+  reloadUpdatedContent() {
+    location.reload();
   }
 
   getPaginationData() {
@@ -72,4 +88,31 @@ export class FeedComponent implements OnInit {
   closePostForm(value: boolean) {
     this.openPostForm = false;
   }
+
+  // Get generic response from (post-form) component
+  updateResponse(message: string) {
+    this.notificationMessage = message
+    this.reloadUpdatedContent()
+  }
+
+  // Logic for display notification
+  displayNotification(value: boolean) {
+    this.showNotification = true;
+  }
+
+  closeNotification(value: boolean) {
+    this.showNotification = false;
+  }
+
+  getPostId(number: number) {
+    this.postId = number
+    console.log(number)
+    this.showIndividualPost = true
+  }
+
+  componentToDestroy(value: boolean) {
+    console.log(value)
+    this.showIndividualPost = !value;
+  }
+
 }

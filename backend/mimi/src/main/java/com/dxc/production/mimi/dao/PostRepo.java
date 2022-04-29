@@ -10,11 +10,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PostRepo extends JpaRepository<PostEntity, Long> {
 
-    @Query("SELECT p FROM PostEntity p WHERE p.deleteFlag = 0") // 0 = not deleted
-    Page<PostEntity> findAllActivePost(Pageable pageable);
+    @Query("SELECT p FROM PostEntity p WHERE p.deleteFlag = 0 ORDER BY p.id DESC") // 0 = not deleted
+    Page<PostEntity> findAllActivePostOrderByIdDesc(Pageable pageable);
 
     PostEntity findById(long id);
 
-    @Query("SELECT p FROM PostEntity p WHERE p.deleteFlag = 0 AND id = :id") // 0 = not deleted
-    PostEntity findActivePostById(long id);
+    @Query("SELECT p FROM PostEntity p WHERE p.deleteFlag = 0 AND id = :id ORDER BY p.id DESC") // 0 = not deleted
+    PostEntity findActivePostOrderByIdDesc(long id);
 }

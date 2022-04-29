@@ -11,6 +11,8 @@ import { PostService } from '../_services/post.service';
 })
 export class PostFormComponent implements OnInit {
 
+  myGroup:FormGroup
+
   genericResponse: GenericResponse = new GenericResponse()
 
   // data for sending over to the server
@@ -23,7 +25,16 @@ export class PostFormComponent implements OnInit {
   // Outgoing data to inform parent (feed) to destroy this component after submit or close
   @Output() onClose = new EventEmitter<boolean>();
 
-  constructor(private formBuilder: FormBuilder, private postService: PostService) { }
+  @Output() throwNotification = new EventEmitter<boolean>();
+  @Output() throwResponse = new EventEmitter<string>();
+
+  constructor(private formBuilder: FormBuilder, private postService: PostService) { 
+    this.myGroup = this.formBuilder.group({
+      'caption': undefined,
+      'hyperLink': undefined,
+      'file': undefined
+    });
+  }
 
   ngOnInit() {
     this.openModal()
@@ -41,8 +52,6 @@ export class PostFormComponent implements OnInit {
 
   // Close when user submitted form
   onCloseSubmit() {
-    this.display = "none";
-    this.onClose.emit(true);
     this.onSubmitAttemptPost()
   }
 
@@ -71,7 +80,7 @@ export class PostFormComponent implements OnInit {
       .subscribe({
         next: (genericResponse: GenericResponse) => {
           this.genericResponse = genericResponse
-          console.log(genericResponse)
+          console.log("set responseed")
         },
         error: (e) => {
           this.genericResponse.httpStatus = e.error.httpStatus
@@ -79,7 +88,12 @@ export class PostFormComponent implements OnInit {
           this.genericResponse.timeStamp = e.error.timeStamp
           console.log(e.error)
         },
-        complete: () => {}
+        complete: () => {
+          this.throwNotification.emit(true)
+          this.throwResponse.emit(this.genericResponse.message)
+          this.onClose.emit(true);
+          this.display = "none";
+        }
       })
   }
 }

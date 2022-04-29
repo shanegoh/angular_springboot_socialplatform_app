@@ -15,7 +15,7 @@ export class AuthGuard implements CanActivate {
 
         if (currentUser.isAuthenticated() && currentUser.hasToken()) {
             // check if route is restricted by role
-            if (route.data['roles'] && route.data['roles'] === currentUser.getRole()) {
+            if (route.data['roles'] && route.data['roles'].indexOf(currentUser.getRole()) !== -1 ) {
                 // authorised so return true
                 return true
             }

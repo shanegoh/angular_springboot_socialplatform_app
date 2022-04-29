@@ -19,6 +19,8 @@ import { NAVComponent } from './nav/nav.component';
 import { LogoutComponent } from './logout/logout.component';
 import { AddPostComponent } from './add-post/add-post.component';
 import { PostFormComponent } from './post-form/post-form.component';
+import { NotificationComponent } from './notification/notification.component';
+import { IndividualPostComponent } from './individual-post/individual-post.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,9 @@ import { PostFormComponent } from './post-form/post-form.component';
     NAVComponent,
     LogoutComponent,
     AddPostComponent,
-    PostFormComponent
+    PostFormComponent,
+    NotificationComponent,
+    IndividualPostComponent
   ],
   imports: [
     BrowserModule,
@@ -43,7 +47,6 @@ import { PostFormComponent } from './post-form/post-form.component';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-
   ],
   providers: [
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },

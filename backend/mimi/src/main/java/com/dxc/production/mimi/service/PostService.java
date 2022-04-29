@@ -40,7 +40,7 @@ public class PostService implements PostServiceInterface {
         List<PostDTO> postDTOList = new ArrayList<>();
         try {
             Pageable pageable = PageRequest.of(pageNumber - 1, 10); // Set page size
-            Page<PostEntity> postEntityList = postRepo.findAllActivePost(pageable); // update created and last modified by
+            Page<PostEntity> postEntityList = postRepo.findAllActivePostOrderByIdDesc(pageable); // update created and last modified by
             if(postEntityList.isEmpty())
                 return new GenericResponse("No more records.", HttpStatus.NOT_FOUND);
             // Copy to PostDTO
@@ -82,7 +82,7 @@ public class PostService implements PostServiceInterface {
         } catch (Exception e) {
             return new GenericResponse("Failed to post. Please try again.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new GenericResponse("Content Posted.", HttpStatus.CREATED);
+        return new GenericResponse("Content Posted", HttpStatus.CREATED);
     }
 
     @Override
@@ -157,7 +157,7 @@ public class PostService implements PostServiceInterface {
     @Override
     public GenericResponse getPostById(Long id) {
         try {
-            PostEntity postEntity = postRepo.findActivePostById(id);
+            PostEntity postEntity = postRepo.findActivePostOrderByIdDesc(id);
             postEntity.setViewCount(postEntity.getViewCount() + 1); // increment
             postRepo.save(postEntity); // try save
             PostDTO postDTO = new PostDTO();

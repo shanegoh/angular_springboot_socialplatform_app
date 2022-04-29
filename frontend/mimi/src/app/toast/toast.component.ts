@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, PipeTransform } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Content } from '../_models/response/content';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { StreamService } from '../_services/stream.service';
@@ -12,30 +12,21 @@ import { FileResponse } from '../_models/response/file-response';
 
 
 export class ToastComponent implements OnInit {
+
   hyperLinkUrl: SafeResourceUrl | undefined;
   mediaLinkUrl: SafeResourceUrl | undefined;
 
+  // get content from parent component (feed)
+  @Input() content: Content | undefined
 
-  @Input() content: Content | undefined;
+  // Send post id to (feed) component
+  @Output() throwPostIdToFeed = new EventEmitter<number>();
 
-  constructor(public sanitizer: DomSanitizer, private streamService: StreamService) { }
+  constructor(private streamService: StreamService) { }
 
   ngOnInit(): void {
-    // checker link https://picsum.photos/200/30
-    var hyperLink = this.content?.hyperLink!;
-
-    const reader = new FileReader();
     this.loadMedia(this.content?.mediaLink!)
-
-    if (hyperLink !== undefined && /youtube/i.test(hyperLink)) {
-      hyperLink = hyperLink.replace("watch?v=", "embed/")
-    }
-
-    this.hyperLinkUrl = this.sanitizerBypass(hyperLink); 
-  }
-
-  sanitizerBypass = (file: string) => {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(file); 
+    this.hyperLinkUrl = this.streamService.checkYoutubeLink(this.content?.hyperLink!)
   }
 
   loadMedia(url: string) {
@@ -44,7 +35,7 @@ export class ToastComponent implements OnInit {
       .subscribe({
         next: (fileResponse:FileResponse) => {
           var file = "data:" + fileResponse.format + ";base64," + fileResponse.file
-          this.mediaLinkUrl = this.sanitizer.bypassSecurityTrustResourceUrl(file);
+          this.mediaLinkUrl = this.streamService.sanitizerBypass(file);
         },
         error: (e) => {
           console.log(e.error)
@@ -53,8 +44,9 @@ export class ToastComponent implements OnInit {
       })
   }
 
+  // Send to (feed) component to send to individual post 
   viewPost() {
     console.log(this.content?.id)
-    console.log("CLICKED")
+    this.throwPostIdToFeed.emit(this.content?.id)
   }
 }

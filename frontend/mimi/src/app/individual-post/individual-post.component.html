@@ -1,0 +1,16 @@
+<div class="container pt-5">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div>
+                {{content?.name}}
+                <small class="text-muted">@{{content?.username}}</small>
+            </div>
+          <button class="btn btn-danger" (click)="onClickClosePost()">Cancel</button>
+        </div>
+        <div class="card-body ">
+          <h5 class="card-title">{{content?.caption}}</h5>
+          <object *ngIf="content?.hyperLink" width="100%" height="100%" [data]="hyperLinkUrl"></object>
+          <object *ngIf="content?.mediaLink" width="100%" height="100%" [data]="mediaLinkUrl"></object>
+        </div>
+    </div>
+</div>
