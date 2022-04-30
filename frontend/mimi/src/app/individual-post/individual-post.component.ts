@@ -1,13 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Content } from '../_models/response/content';
 import { FileResponse } from '../_models/response/file-response';
 import { GenericResponse } from '../_models/response/generic-response';
 import { PostResponse } from '../_models/response/post-response';
 import { PostService } from '../_services/post.service';
 import { StreamService } from '../_services/stream.service';
 import { JWTService } from '../_services/jwt.service';
+import { Content } from '../_models/content';
 
 @Component({
   selector: 'individual-post',

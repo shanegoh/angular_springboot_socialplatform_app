@@ -1,7 +1,6 @@
-import { Content } from "./content";
 import { GenericResponse } from "./generic-response";
-import { PaginationDetail } from "./pagination-detail";
+import { PostPaginationDetail } from "./post-pagination-detail";
 
 export class PostPagination extends GenericResponse{
-    pagination: PaginationDetail | undefined
+    pagination: PostPaginationDetail | undefined
 }

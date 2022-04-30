@@ -22,6 +22,8 @@ import { NotificationComponent } from './notification/notification.component';
 import { IndividualPostComponent } from './individual-post/individual-post.component';
 import { UpdateFormComponent } from './update-form/update-form.component';
 import { AdminHomeComponent } from './admin-home/admin-home.component';
+import { ManageUserComponent } from './manage-user/manage-user.component';
+import { AccountInfoComponent } from './account-info/account-info.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +42,9 @@ import { AdminHomeComponent } from './admin-home/admin-home.component';
     NotificationComponent,
     IndividualPostComponent,
     UpdateFormComponent,
-    AdminHomeComponent
+    AdminHomeComponent,
+    ManageUserComponent,
+    AccountInfoComponent
   ],
   imports: [
     BrowserModule,

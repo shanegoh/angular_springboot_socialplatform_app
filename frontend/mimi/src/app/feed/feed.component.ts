@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Content } from '../_models/response/content';
 import { GenericResponse } from '../_models/response/generic-response';
 import { PostPagination } from '../_models/response/post-pagination';
 import { PostService } from '../_services/post.service';
 import { HostListener } from '@angular/core';
 import { JWTService } from '../_services/jwt.service';
+import { Content } from '../_models/content';
 
 @Component({
   selector: 'feed',
@@ -40,7 +40,6 @@ export class FeedComponent implements OnInit {
   constructor(private router: Router, private postService: PostService, public jwtService: JWTService) { }
 
   ngOnInit(): void {
-    console.log("?")
     if(this.jwtService.isAdmin()) {
       this.getPaginationDataAdmin()
     } else {
@@ -149,10 +148,7 @@ export class FeedComponent implements OnInit {
   // Listen for end of page then scroll down
   @HostListener('window:scroll', ['$event'])
   onWindowScroll(event: WindowEventHandlers) {
-    console.log(document.body.scrollHeight)
-    console.log(window.innerHeight + window.scrollY)
-
-    if (window.innerHeight + window.scrollY +1 >= document.body.scrollHeight) {
+    if (window.innerHeight + window.scrollY  + .5 >= document.body.scrollHeight) {
       console.log("??")
       if(!this.last) {
         console.log("loading..")
@@ -162,8 +158,6 @@ export class FeedComponent implements OnInit {
           this.getPaginationData()
         }
       }
-    }   
-    
-    
+    }       
   }
 }

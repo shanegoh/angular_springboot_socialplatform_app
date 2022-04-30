@@ -82,15 +82,6 @@ public class PostController {
         return new ResponseEntity<>(genericResponseInterface, genericResponseInterface.getHttpStatus());
     }
 
-    // Admin -> API TESTED OK
-    @PutMapping("/admin/updateAccountStatus/{id}/{status}")
-    public ResponseEntity updateAccountStatus(@PathVariable("id") Long id, @PathVariable("status") Integer status) {
-        String username = userServiceInterface.getUserInformation().getUsername();
-        GenericResponseInterface genericResponseInterface = userServiceInterface
-                .updateAccountStatusById(id, username, status);
-        return new ResponseEntity<>(genericResponseInterface, genericResponseInterface.getHttpStatus());
-    }
-
     // USER -> API TEST OK
     @GetMapping("/stream/uploads/{url}")
     public ResponseEntity stream(@PathVariable("url") String url) throws IOException {

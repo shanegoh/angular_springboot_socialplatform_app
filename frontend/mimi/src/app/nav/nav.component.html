@@ -1,15 +1,26 @@
 <div class="container-fluid bg-dark">
-    <ul ngbNav #nav="ngbNav" class="nav-buttons d-flex justify-content-between bg-dark fixed-top pt-2">
-        <li ngbNavItem>
-            <a class="text-light"ngbNavLink>MiMi</a>
-            <ng-template ngbNavContent><feed></feed></ng-template>
-        </li>
-        <li ngbNavItem>
-            <label class="text-primary">@{{username}}</label>
-        </li>
-        <li ngbNavItem>
-            <a ngbNavLink (click)="logout()" class="text-danger">Logout</a>
-        </li>
-    </ul>
+    <div ngbNav #nav="ngbNav" [(activeId)]="activeId"class="d-flex justify-content-left bg-dark fixed-top pt-2">
+        <div ngbNavItem >
+            <a ngbNavLink class="text-light np"><b>MiMi</b></a>
+        </div>
+        <div ngbNavItem [ngbNavItem]="1">
+            <a ngbNavLink><b>Home</b></a>
+            <ng-template ngbNavContent>
+                <feed></feed>
+            </ng-template>
+        </div>
+        <div ngbNavItem *ngIf="this.jwtService.isAdmin()">
+            <a ngbNavLink><b>Manage User</b></a>
+            <ng-template ngbNavContent>
+                <manage-user></manage-user>
+            </ng-template>
+        </div>
+        <div ngbNavItem>
+            <a ngbNavLink class="text-muted np">@{{username}}</a>
+        </div>
+        <div ngbNavItem>
+            <a ngbNavLink (click)="logout()" class="text-danger"><b>Logout</b></a>
+        </div>
+    </div>
     <div [ngbNavOutlet]="nav"></div>
 </div>

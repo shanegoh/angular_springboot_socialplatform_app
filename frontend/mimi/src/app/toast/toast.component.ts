@@ -1,9 +1,9 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { Content } from '../_models/response/content';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { SafeResourceUrl } from '@angular/platform-browser';
 import { StreamService } from '../_services/stream.service';
 import { FileResponse } from '../_models/response/file-response';
 import { JWTService } from '../_services/jwt.service';
+import { Content } from '../_models/content';
 
 @Component({
   selector: 'toast',

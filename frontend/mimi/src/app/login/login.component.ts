@@ -36,9 +36,9 @@ export class LoginComponent implements OnInit {
             this.jwtService.setTokenDetails(authenticationResponse.jsonWebToken!) // set token details
             // redirect to page base on the role.
             if(this.jwtService.isAdmin()) {
-              this.router.navigate(['/adminHome']) 
+              this.router.navigate(['/admin']) 
             } else {
-              this.router.navigate(['/userHome']) 
+              this.router.navigate(['/user']) 
             }
           },
           error: (e) => {

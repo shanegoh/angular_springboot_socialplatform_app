@@ -1,9 +1,12 @@
 package com.dxc.production.mimi.service;
 
+import com.dxc.production.mimi.dto.AccountDTO;
+import com.dxc.production.mimi.dto.PostDTO;
 import com.dxc.production.mimi.dto.RegistrationErrorDTO;
 import com.dxc.production.mimi.enumerate.Message;
 import com.dxc.production.mimi.enumerate.Role;
 import com.dxc.production.mimi.enumerate.Status;
+import com.dxc.production.mimi.model.PostEntity;
 import com.dxc.production.mimi.model.request.RegistrationRequest;
 import com.dxc.production.mimi.model.response.*;
 import com.dxc.production.mimi.securityconfig.CustomUserDetailsService;
@@ -14,6 +17,10 @@ import com.dxc.production.mimi.model.UserEntity;
 import com.dxc.production.mimi.model.request.AuthenticationRequest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,6 +32,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -131,6 +141,29 @@ public class UserService implements UserServiceInterface {
             return new GenericResponse("Successfully updated user status.", HttpStatus.OK);
         } catch (Exception e) {
             return new GenericResponse("Error. Unable to update user status.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public GenericResponse getAllUserAccount(Integer pageNumber) {
+        List<AccountDTO> accountDTOList = new ArrayList<>();
+        try {
+            Pageable pageable = PageRequest.of(pageNumber - 1, 10); // Set page size
+            Page<UserEntity> userEntityList = userRepo.findAll(pageable);       // Retrieve records for certain page
+            if(userEntityList.isEmpty())
+                return new GenericResponse("No more records.", HttpStatus.NOT_FOUND);
+
+            // Copy to PostDTO
+            for (UserEntity userEntity : userEntityList) {
+                AccountDTO accountDTO = new AccountDTO();
+                BeanUtils.copyProperties(userEntity, accountDTO);
+                accountDTOList.add(accountDTO);
+            }
+            return new PostResponse<>("Successfully retrieve all record(s).",
+                    HttpStatus.OK, new PageImpl<AccountDTO>(accountDTOList, pageable, userEntityList.getTotalElements()));
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return new GenericResponse("Unable to load record(s).", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

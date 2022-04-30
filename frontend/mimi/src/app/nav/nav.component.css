@@ -1,0 +1,4 @@
+.np {
+    display: inline-block;
+    pointer-events: none;
+  }

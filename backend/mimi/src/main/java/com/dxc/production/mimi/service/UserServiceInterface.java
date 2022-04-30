@@ -13,4 +13,6 @@ public interface UserServiceInterface {
     GenericResponse registerUser(RegistrationRequest registrationRequest);
 
     GenericResponse updateAccountStatusById(Long id, String username, Integer status);
+
+    GenericResponse getAllUserAccount(Integer pageNumber);
 }

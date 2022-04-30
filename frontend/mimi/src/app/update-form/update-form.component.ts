@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Content } from '../_models/content';
 import { PostRequest } from '../_models/request/post-request';
-import { Content } from '../_models/response/content';
 import { GenericResponse } from '../_models/response/generic-response';
 import { PostService } from '../_services/post.service';
 

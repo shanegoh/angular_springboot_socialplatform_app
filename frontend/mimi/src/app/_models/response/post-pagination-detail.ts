@@ -1,6 +1,6 @@
-import { Content } from "./content"
+import { Content } from "../content"
 
-export class PaginationDetail {
+export class PostPaginationDetail {
     content: Content[] | undefined
     last: boolean | undefined
     totalElements: number | undefined

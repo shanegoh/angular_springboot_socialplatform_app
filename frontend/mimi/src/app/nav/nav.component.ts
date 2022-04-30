@@ -9,13 +9,14 @@ import { JWTService } from '../_services/jwt.service';
 })
 export class NAVComponent implements OnInit {
 
-  constructor(private router: Router, private jwtService:JWTService) { }
+  constructor(private router: Router, public jwtService:JWTService) { }
 
   username: string | undefined | null
 
   ngOnInit(): void {
     this.username = this.jwtService.getUsername()
   }
+  activeId = 1
 
   logout() {
     localStorage.clear();

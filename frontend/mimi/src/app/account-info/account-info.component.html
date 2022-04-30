@@ -1,0 +1,39 @@
+<div class="container-fluid pt-5">
+    <div>
+        <table class="table table-hover fontSize">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Created By</th>
+                    <th scope="col">Creation Date</th>
+                    <th scope="col">Modified By</th>
+                    <th scope="col">Modified Date</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let content of pageWithContent[pageNumber - 1]">
+                    <th scope="row">{{content.id}}</th>
+                    <td>{{content.email}}</td>
+                    <td>{{content.username}}</td>
+                    <td>{{content.name}}</td>
+                    <td>{{content.role === 1 ? "USER" : "ADMIN"}}</td>
+                    <td>{{content.createdBy}}</td>
+                    <td>{{content.creationDate | date:'short'}}</td>
+                    <td>{{content.lastModifiedBy}}</td>
+                    <td>{{content.lastModifiedDate | date:'short'}}</td>
+                    <td>{{content.deleteFlag === 0 ? "ACTIVE" : "DELETED"}}</td>
+                    <td><button class="btn btn-primary"></button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <ngb-pagination [collectionSize]="this.totalElements!" [(page)]="pageNumber" (pageChange)="verifyLoadStatus()"></ngb-pagination>
+        <hr>
+    </div>
+</div>
