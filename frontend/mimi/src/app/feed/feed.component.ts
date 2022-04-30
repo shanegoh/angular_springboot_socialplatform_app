@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Content } from '../_models/response/content';
 import { GenericResponse } from '../_models/response/generic-response';
 import { PostPagination } from '../_models/response/post-pagination';
 import { PostService } from '../_services/post.service';
+import { HostListener } from '@angular/core';
+import { JWTService } from '../_services/jwt.service';
 
 @Component({
   selector: 'feed',
@@ -35,27 +36,45 @@ export class FeedComponent implements OnInit {
 
   showIndividualPost = true;
 
-  constructor(private router: Router, private postService: PostService) { }
+  scrolled = false;
+  constructor(private router: Router, private postService: PostService, public jwtService: JWTService) { }
 
   ngOnInit(): void {
-    this.getPaginationData()
-  }
-
-  // subscribe for creation account status from register method
-  onClickLoadNextPage(event: MouseEvent) {
-    // Disable button on click on the final page
-    if(this.totalPages !== undefined && this.pageNumber >= this.totalPages - 1)
-      (event.target as HTMLButtonElement).hidden = true;
-    this.getPaginationData()
-  }
-
-  reloadUpdatedContent() {
-    location.reload();
+    console.log("?")
+    if(this.jwtService.isAdmin()) {
+      this.getPaginationDataAdmin()
+    } else {
+      this.getPaginationData()
+    }
   }
 
   getPaginationData() {
     this.pageNumber = this.pageNumber + 1;
     this.postService.getPostByPage(this.pageNumber)
+    .subscribe({
+      next: (postPagination: PostPagination) => {
+        this.contentList.push(...postPagination.pagination?.content!) 
+        this.last = postPagination.pagination?.last
+        this.totalElements = postPagination.pagination?.totalElements
+        this.totalPages = postPagination.pagination?.totalPages
+      },
+      error: (e) => {               
+        this.genericResponse.httpStatus = e.error.httpStatus
+        this.genericResponse.message = e.error.message
+        this.genericResponse.timeStamp = e.error.timeStamp
+      },
+      complete: () => {
+        console.log(this.contentList); 
+        console.log("Last Page: " + this.last); 
+        console.log("Total Elements: " + this.totalElements)
+        console.log("Total Pages: " + this.totalPages)
+      }
+    })
+  }
+
+  getPaginationDataAdmin() {
+    this.pageNumber = this.pageNumber + 1;
+    this.postService.getPostByPageAdmin(this.pageNumber)
     .subscribe({
       next: (postPagination: PostPagination) => {
         this.contentList.push(...postPagination.pagination?.content!) 
@@ -91,8 +110,15 @@ export class FeedComponent implements OnInit {
 
   // Get generic response from (post-form) component
   updateResponse(message: string) {
+    // reset
     this.notificationMessage = message
-    this.reloadUpdatedContent()
+    this.contentList = []
+    this.pageNumber = 0
+    if(this.jwtService.isAdmin()) {
+      this.getPaginationDataAdmin()
+    } else {
+      this.getPaginationData()
+    }
   }
 
   // Logic for display notification
@@ -115,4 +141,29 @@ export class FeedComponent implements OnInit {
     this.showIndividualPost = !value;
   }
 
+  @HostListener('scroll')
+  public asd(): void {
+  console.log('scrolling');
+}
+
+  // Listen for end of page then scroll down
+  @HostListener('window:scroll', ['$event'])
+  onWindowScroll(event: WindowEventHandlers) {
+    console.log(document.body.scrollHeight)
+    console.log(window.innerHeight + window.scrollY)
+
+    if (window.innerHeight + window.scrollY +1 >= document.body.scrollHeight) {
+      console.log("??")
+      if(!this.last) {
+        console.log("loading..")
+        if(this.jwtService.isAdmin()) {
+          this.getPaginationDataAdmin()
+        } else {
+          this.getPaginationData()
+        }
+      }
+    }   
+    
+    
+  }
 }

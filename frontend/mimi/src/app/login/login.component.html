@@ -1,21 +1,29 @@
-<div class="container">
-    <div class="form-group mb-4 h1 text-center">Sign In</div>
-    <form (ngSubmit)="onSubmitLogin()" ngNativeValidate  >
-        <div class="form-group mb-4">
-            <input type="text" required class="form-control" id="username" name="username" placeholder="Username" [(ngModel)]="user.username"> 
-            <!-- <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> -->
-            <div class="valid-feedback">
-                Looks good!
-              </div>
+<div class="container ">
+    <div class="card">
+        <div class="card-header">
+            Sign In
         </div>
-        <div class="form-group mb-4">
-            <input type="password" required class="form-control" id="password" name="password" placeholder="Password" [(ngModel)]="user.password">
+        <div class="card-body">
+            <form (ngSubmit)="onSubmitLogin()" ngNativeValidate>
+                <div class="form-group mb-4">
+                    <input type="text" required class="form-control" [ngClass]="genericResponse.message ? 'is-invalid': '' " id="username" name="username"
+                        placeholder="Username" maxlength="50" [(ngModel)]="user.username">
+                </div>
+                <div class="form-group mb-2">
+                    <input type="password" required class="form-control" [ngClass]="genericResponse.message ? 'is-invalid': '' " id="password" name="password"
+                        placeholder="Password" maxlength="16" [(ngModel)]="user.password">
+                </div>
+                <div class="form-group mb-2 text-center" *ngIf="genericResponse.message">
+                    <small class="text-danger">{{genericResponse.message}}</small>
+                </div>
+                <div class="form-group mb-4 text-center">
+                    <button type="submit" class="btn btn-dark w-100">Login</button>
+                </div>
+                <div class="text-center pb-3">
+                    <button class="btn btn-success w-100" (click)="goToRegister()">Don't have an account? Register
+                        here</button>
+                </div>
+            </form>
         </div>
-        <div class="form-group mb-4">
-            <button type="submit" class="btn btn-primary w-100">Login</button>
-        </div>
-    </form>
-    <div class="text-center">
-        <button class="btn btn-success" (click)="goToRegister()">Don't have an account? Register here</button>
     </div>
 </div>

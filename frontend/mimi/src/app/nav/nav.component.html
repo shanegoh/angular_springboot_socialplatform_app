@@ -1,15 +1,14 @@
 <div class="container-fluid bg-dark">
     <ul ngbNav #nav="ngbNav" class="nav-buttons d-flex justify-content-between bg-dark fixed-top pt-2">
         <li ngbNavItem>
-            <a ngbNavLink>MiMi</a>
+            <a class="text-light"ngbNavLink>MiMi</a>
             <ng-template ngbNavContent><feed></feed></ng-template>
         </li>
         <li ngbNavItem>
-            <a ngbNavLink>Home</a>
-            <ng-template ngbNavContent><feed></feed></ng-template>
+            <label class="text-primary">@{{username}}</label>
         </li>
         <li ngbNavItem>
-            <logout (newItemEvent)="clearStorage($event)"></logout>
+            <a ngbNavLink (click)="logout()" class="text-danger">Logout</a>
         </li>
     </ul>
     <div [ngbNavOutlet]="nav"></div>

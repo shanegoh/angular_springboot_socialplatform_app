@@ -13,8 +13,11 @@ public interface PostRepo extends JpaRepository<PostEntity, Long> {
     @Query("SELECT p FROM PostEntity p WHERE p.deleteFlag = 0 ORDER BY p.id DESC") // 0 = not deleted
     Page<PostEntity> findAllActivePostOrderByIdDesc(Pageable pageable);
 
+    @Query("SELECT p FROM PostEntity p ORDER BY p.id DESC")
+    Page<PostEntity> findAllPostOrderByIdDesc(Pageable pageable);
+
     PostEntity findById(long id);
 
-    @Query("SELECT p FROM PostEntity p WHERE p.deleteFlag = 0 AND id = :id ORDER BY p.id DESC") // 0 = not deleted
-    PostEntity findActivePostOrderByIdDesc(long id);
+//    @Query("SELECT p FROM PostEntity p WHERE p.deleteFlag = 0 AND id = :id ORDER BY p.id DESC") // 0 = not deleted
+//    PostEntity findActivePostOrderByIdDesc(long id);
 }

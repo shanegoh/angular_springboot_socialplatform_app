@@ -89,7 +89,7 @@ public class PostService implements PostServiceInterface {
     public GenericResponse getAllPost(Integer pageNumber) {
         try {
             Pageable pageable = PageRequest.of(pageNumber - 1, 10); // Set page size
-            Page<PostEntity> postEntityList = postRepo.findAll(pageable);       // Retrieve records for certain page
+            Page<PostEntity> postEntityList = postRepo.findAllPostOrderByIdDesc(pageable);       // Retrieve records for certain page
             if(postEntityList.isEmpty())
                 return new GenericResponse("No more records.", HttpStatus.NOT_FOUND);
 
@@ -147,7 +147,7 @@ public class PostService implements PostServiceInterface {
             postEntity.setLastModifiedBy(username); // set modified username
             postRepo.save(postEntity); // try save
 
-            return new GenericResponse("Successfully deleted record.", HttpStatus.OK);
+            return new GenericResponse("Successfully deleted.", HttpStatus.OK);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return new GenericResponse("Error. Failed to delete post.", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -157,7 +157,7 @@ public class PostService implements PostServiceInterface {
     @Override
     public GenericResponse getPostById(Long id) {
         try {
-            PostEntity postEntity = postRepo.findActivePostOrderByIdDesc(id);
+            PostEntity postEntity = postRepo.findById(id.longValue());
             postEntity.setViewCount(postEntity.getViewCount() + 1); // increment
             postRepo.save(postEntity); // try save
             PostDTO postDTO = new PostDTO();

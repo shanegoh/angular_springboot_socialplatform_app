@@ -49,11 +49,15 @@ export class JWTService {
   }
 
   setRole = (role: boolean) => {
-    const roleName = role == true ? "ADMIN" : "USER"
+    const roleName = role === true ? "ADMIN" : "USER"
     localStorage.setItem("ROLE", roleName)
   }
 
   getRole = () => {
     return localStorage.getItem("ROLE")
+  }
+
+  isAdmin = () => {
+    return localStorage.getItem("ROLE") === "ADMIN" ? true : false
   }
 }

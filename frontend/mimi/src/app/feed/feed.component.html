@@ -1,5 +1,7 @@
 <div class="bg-black pt-2">
-    <add-post class="addPostBtn" (updateFeedToShowForm)="updatePostFormStatus($event)"></add-post>
+    <add-post 
+    *ngIf="this.jwtService.isAdmin() === false"
+    class="addPostBtn" (updateFeedToShowForm)="updatePostFormStatus($event)"></add-post>
 
     <post-form *ngIf="openPostForm" (throwNotification)="displayNotification($event)"
         (throwResponse)="updateResponse($event)" (onClose)="closePostForm($event)">
@@ -9,14 +11,17 @@
         (onCloseNotification)="closeNotification($event)">
     </notification>
 
-    <div class="container w-50 bg-black">
+    <div class="container w-50 bg-black pt-5 pb-5">
         <div *ngFor="let eachContent of contentList">
-            <toast (throwPostIdToFeed)="getPostId($event)" [content]="eachContent"></toast>
+            <toast (throwPostIdToFeed)="getPostId($event)" [content]="eachContent" ></toast>
         </div>
     </div>
-    <button class="btn btn-primary w-100" (click)="onClickLoadNextPage($event)">Load data!</button>
     <div class="container post" *ngIf="postId && showIndividualPost">
-        <individual-post [individualPostId]="postId" (destroyPostComponent)="componentToDestroy($event)">
+        <individual-post [individualPostId]="postId" 
+        (destroyPostComponent)="componentToDestroy($event)"
+        (throwNotification)="displayNotification($event)"
+        (throwResponse)="updateResponse($event)"
+        >
         </individual-post>
     </div>
 </div>

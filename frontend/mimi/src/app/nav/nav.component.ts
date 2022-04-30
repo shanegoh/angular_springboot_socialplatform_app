@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { JWTService } from '../_services/jwt.service';
 
 @Component({
   selector: 'nav',
@@ -8,13 +9,16 @@ import { Router } from '@angular/router';
 })
 export class NAVComponent implements OnInit {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private jwtService:JWTService) { }
 
-  ngOnInit(): void {}
+  username: string | undefined | null
 
-  clearStorage(value: boolean) {
-    if(value) {
-      this.router.navigate(['/login'])
-    }
+  ngOnInit(): void {
+    this.username = this.jwtService.getUsername()
+  }
+
+  logout() {
+    localStorage.clear();
+    this.router.navigate(['/login'])
   }
 }

@@ -49,6 +49,8 @@ public class PostController {
     @PutMapping("/updatePost")
     public ResponseEntity updatePost(@RequestPart(value = "media", required = false) MultipartFile multipartFile,
                                      @RequestPart("body") PostRequest postRequest) {
+        System.out.println(postRequest.getHyperLink());
+        System.out.println(postRequest.getCaption());
         // Set username
         postRequest.setUsername(userServiceInterface.getUserInformation().getUsername());
         Integer role = userServiceInterface.getUserInformation().getRole();

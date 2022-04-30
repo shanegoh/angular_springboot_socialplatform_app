@@ -6,4 +6,9 @@ export class Content {
     mediaLink: string | undefined
     caption: string | undefined
     viewCount: number | undefined
+    createdBy: string | undefined
+    creationDate: Date | undefined
+    lastModifiedBy: string | undefined
+    lastModifiedDate: Date | undefined
+    deleteFlag: number | undefined
 }

@@ -1,37 +1,33 @@
-<!-- <div class="container pt-5">
-    <div class="card">
-        <div class="card-header d-flex justify-content-between">
-            <div>
-                {{content?.name}}
-                <small class="text-muted">@{{content?.username}}</small>
-            </div>
-          <button class="btn btn-danger" (click)="onClickClosePost()">Cancel</button>
-        </div>
-        <div class="card-body ">
-          <h5 class="card-title">{{content?.caption}}</h5>
-          <object *ngIf="content?.hyperLink" width="100%" height="100%" [data]="hyperLinkUrl"></object>
-          <object *ngIf="content?.mediaLink" width="100%" height="100%" [data]="mediaLinkUrl"></object>
-        </div>
-    </div>
-</div> -->
 <div class="container pt-5">
     <div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':display}">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header d-flex justify-content-between">
+                    <button *ngIf="openUpdateFormStatus" class="btn btn-primary m-1" (click)="closeUpdateForm()"><i class="bi bi-arrow-left-short"></i></button>
                     <div>
                         {{content?.name}}
                         <small class="text-muted">@{{content?.username}}</small>
                     </div>
-                    <button type="button" class="btn btn-danger" (click)="onClickClosePost()">X</button>
+                    <button type="button" class="btn btn-white" (click)="onClickClosePost()"><i class="bi bi-x-circle-fill"></i></button>
                 </div>
-                <div class="modal-body">
+                <div *ngIf="!openUpdateFormStatus; else showForm" class="modal-body">
                     <h5 class="card-title">{{content?.caption}}</h5>
                     <object *ngIf="content?.hyperLink" width="100%" height="100%" [data]="hyperLinkUrl"></object>
                     <object *ngIf="content?.mediaLink" width="100%" height="100%" [data]="mediaLinkUrl"></object>
                 </div>
-                <div class="modal-footer">
-
+                <ng-template #showForm><update-form [postContent]="content" 
+                                                    (onClose)="closePost($event)"
+                                                    (throwResponse)="setResponse($event)"></update-form></ng-template>
+                <div *ngIf="!openUpdateFormStatus" class="modal-footer d-flex justify-content-between">
+                    <div>
+                        <i class="bi bi-eye-fill"></i>&nbsp;{{content?.viewCount}}
+                    </div>
+                    <div *ngIf="content?.username === this.jwtService.getUsername() || this.jwtService.isAdmin() === true">
+                        <div *ngIf="!openUpdateFormStatus">
+                            <button  class="btn btn-dark m-1" (click)="openUpdateForm()">Edit</button>
+                            <button class="btn btn-danger" (click)="deletePost()"><i class="bi bi-trash3-fill"></i></button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

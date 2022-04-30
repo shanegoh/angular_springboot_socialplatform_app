@@ -3,9 +3,11 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Content } from '../_models/response/content';
 import { FileResponse } from '../_models/response/file-response';
+import { GenericResponse } from '../_models/response/generic-response';
 import { PostResponse } from '../_models/response/post-response';
 import { PostService } from '../_services/post.service';
 import { StreamService } from '../_services/stream.service';
+import { JWTService } from '../_services/jwt.service';
 
 @Component({
   selector: 'individual-post',
@@ -15,18 +17,16 @@ import { StreamService } from '../_services/stream.service';
 export class IndividualPostComponent implements OnInit {
 
   // shut the modal
-  display = "none";
+  display = "block";
 
-  openModal() {
-    this.display = "block";
+  onClickClosePost() {
+    this.destroyPostComponent.emit(true)
   }
 
-  // Close when user close form
-  onCloseHandled() {
-    this.display = "none";
-  }
-
-  constructor(private route: ActivatedRoute, private postService: PostService, private streamService: StreamService, private router: Router) { }
+  constructor(private route: ActivatedRoute, 
+    private postService: PostService, 
+    private streamService: StreamService,
+    public jwtService: JWTService) {}
 
   postResponse: PostResponse = new PostResponse();
   content: Content | undefined
@@ -38,8 +38,17 @@ export class IndividualPostComponent implements OnInit {
 
   @Output() destroyPostComponent = new EventEmitter<boolean>();
 
+  // throw back to feed to display notification
+  @Output() throwNotification = new EventEmitter<boolean>();
+  @Output() throwResponse = new EventEmitter<string>();
+
+  genericResponse: GenericResponse = new GenericResponse();
+
+  openUpdateFormStatus = false;
+
+  disableUpdateBtn = true;
+
   ngOnInit(): void {
-    this.openModal()
     this.loadOnePost(this.individualPostId!)
   }
 
@@ -62,7 +71,6 @@ export class IndividualPostComponent implements OnInit {
   }
 
   loadMedia(url: string) {
-    console.log("loading media")
     this.streamService.streamMedia(url)
       .subscribe({
         next: (fileResponse: FileResponse) => {
@@ -77,9 +85,44 @@ export class IndividualPostComponent implements OnInit {
       })
   }
 
-  onClickClosePost() {
-    console.log("clicked closed")
-    this.destroyPostComponent.emit(true)
-    this.display = "none";
+  deletePost() {
+    console.log(this.content?.id)
+    this.postService.deletePostById(this.content?.id!)
+      .subscribe({
+        next: (genericResponse: GenericResponse) => {
+          this.genericResponse = genericResponse
+          console.log(genericResponse)
+          this.throwNotification.emit(true)
+          this.throwResponse.emit(genericResponse.message)
+          this.onClickClosePost()
+        },
+        error: (e) => {
+          this.genericResponse.httpStatus = e.error.httpStatus
+          this.genericResponse.message = e.error.message
+          this.genericResponse.timeStamp = e.error.timeStamp
+          console.log(e.error)
+        },
+        complete: () => {}
+      })
+  }
+
+  // set open form status
+  openUpdateForm() {
+    this.openUpdateFormStatus = true
+  }
+
+  closeUpdateForm() {
+    this.openUpdateFormStatus = false
+  }
+
+  // status from update-form component
+  closePost(value: boolean) {
+    this.onClickClosePost()
+  }
+
+  // response from update-form component
+  setResponse(value: string) {
+    this.throwNotification.emit(true)
+    this.throwResponse.emit(value)
   }
 }

@@ -1,13 +1,24 @@
-<ngb-toast [autohide]="false" class="mt-5 w-100" (click)="viewPost()">
-    <ng-template ngbToastHeader>
-        <div class="me-auto">
-            <div class="mx-1">
-                <div class="text-primary fs-3">{{content?.name}}</div>
-                <small class="text-muted">@{{content?.username}}</small>
-            </div><br>
-            <strong>{{content?.caption}}</strong>
+<div class="card mt-3" (click)="viewPost()">
+    <div class="card-header">
+        <div class="d-flex flex-column">
+            <h6 class="text-primary fs-3">{{ content?.name}}</h6>
+            <small class="text-muted">&nbsp;@{{ content?.username}}</small>
         </div>
-    </ng-template>
-    <object *ngIf="content?.hyperLink" width="100%" height="100vh" [data]="hyperLinkUrl"></object>
-    <object *ngIf="content?.mediaLink" width="100%" height="100vh" [data]="mediaLinkUrl"></object>
-</ngb-toast>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">{{content?.caption}}</h5>
+        <object *ngIf="content?.hyperLink" width="100%" height="100vh" [data]="hyperLinkUrl"></object>
+        <object *ngIf="content?.mediaLink" width="100%" [data]="mediaLinkUrl"></object>
+        <div class="d-flex flex-column">
+            <small class="text-muted" *ngIf="content?.creationDate">Created On <b>{{content?.creationDate |
+                    date:'medium'}}</b></small>
+            <small class="text-muted" *ngIf="content?.createdBy">Created By <b>{{content?.createdBy}}</b></small>
+            <small class="text-muted" *ngIf="content?.lastModifiedBy">Last Modified By
+                <b>{{content?.lastModifiedBy}}</b></small>
+            <small class="text-muted" *ngIf="content?.lastModifiedDate">Last Modified On <b>{{content?.lastModifiedDate
+                    | date:'medium'}}</b></small>
+            <small class="text-muted" *ngIf="content?.deleteFlag">Status <b>{{content?.deleteFlag === 1 ? 'DELETED' :
+                    'ACTIVE'}}</b></small>
+        </div>
+    </div>
+</div>

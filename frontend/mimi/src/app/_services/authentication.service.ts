@@ -1,15 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders} from "@angular/common/http";
-import { Observable, BehaviorSubject } from "rxjs";
-import { JwtHelperService } from '@auth0/angular-jwt';
+import { HttpClient } from "@angular/common/http";
 import { AuthenticationResponse } from '../_models/response/authentication-response';
 import { JWTService } from './jwt.service';
 
 @Injectable({
   providedIn: 'root'
 })
-
-
 
 export class AuthenticationService {
 

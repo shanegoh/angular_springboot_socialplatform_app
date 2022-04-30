@@ -13,14 +13,17 @@ export class NotificationComponent implements OnInit, OnDestroy {
 
   @Output() onCloseNotification = new EventEmitter<boolean>();
 
+  interval: ReturnType<typeof setTimeout> | null | undefined
+
   ngOnInit() {
     // set display 3000 miliseconds
-    setInterval(()=> this.ngOnDestroy(), 3000);
+    this.interval = setInterval(() => 
+      this.ngOnDestroy(), 1000);
   }
 
   // On destroy, notify the feed component and update show notification to false
   ngOnDestroy(): void {
+    clearInterval(this.interval!)
     this.onCloseNotification.emit(true)
-    console.log("destroyed")
   }
 }

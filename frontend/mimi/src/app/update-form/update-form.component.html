@@ -1,0 +1,18 @@
+<div class="container d-flex flex-column" *ngIf="postContent">
+    <form [formGroup]="myGroup">
+        <div class="form-group">
+            <textarea placeholder="Max 50 characters" formControlName="caption" maxlength="50" id="caption" name="caption" [(ngModel)]="postContent.caption"></textarea>
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control" formControlName="hyperLink" maxlength="500" id="hyperLink" name="hypnerLink" placeholder="Share a link" [(ngModel)]="postContent.hyperLink">
+        </div>
+        <div class="form-group pt-2">
+            <input type="file" class="form-control-file" id="file" name="file" formControlName="file"
+            (change)="handleFileInput($event)" accept=".png,.jpeg,.jpg,.png,.mp4" >
+            <small>PNG, JPEG, JPG, MP4</small>
+        </div>
+        <div class="form-group pt-2 pb-2 d-flex justify-content-end">
+            <button class="btn btn-danger" type="submit" (click)="onClickUpdate()">Update</button>
+        </div>
+    </form>
+</div>
