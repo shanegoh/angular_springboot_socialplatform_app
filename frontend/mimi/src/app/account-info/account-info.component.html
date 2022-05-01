@@ -27,13 +27,19 @@
                     <td>{{content.lastModifiedBy}}</td>
                     <td>{{content.lastModifiedDate | date:'short'}}</td>
                     <td>{{content.deleteFlag === 0 ? "ACTIVE" : "DELETED"}}</td>
-                    <td><button class="btn btn-primary"></button></td>
+                    <td>
+                        <button [ngClass]="[content.deleteFlag === 0 ? 'btn-danger' : 'btn-warning']"
+                            (click)="updateStatus(content.deleteFlag!, content.id!)" class="btn btn-primary">{{content.deleteFlag === 1 ?
+                            "ACTIVATE": "DEACTIVATE"}}
+                        </button>
+                    </td>
                 </tr>
             </tbody>
         </table>
     </div>
     <div>
-        <ngb-pagination [collectionSize]="this.totalElements!" [(page)]="pageNumber" (pageChange)="verifyLoadStatus()"></ngb-pagination>
+        <ngb-pagination [collectionSize]="this.totalElements!" [(page)]="pageNumber" (pageChange)="verifyLoadStatus()">
+        </ngb-pagination>
         <hr>
     </div>
 </div>

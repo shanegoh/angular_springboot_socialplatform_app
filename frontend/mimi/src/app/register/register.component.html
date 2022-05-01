@@ -1,52 +1,77 @@
-<div class="container">
-    <div class="form-group mb-4 h1 text-center">Registration</div>
-    <form (ngSubmit)="onSubmitRegister()" ngNativeValidate  >
-        <div class="form-group mb-3">
-            <label for="email">Email address</label>
-            <input type="email" required class="form-control" [ngClass]="registrationResponse.errorMessages?.emailErrorMsg ? 'is-invalid' : ''" id="email" name="email" placeholder="Email Address" [(ngModel)]="user.email"> 
-            <div *ngIf="!registrationResponse.errorMessages?.emailErrorMsg; else show_email_err">
-                <small class="form-text text-muted">We'll never share your email with anyone else.</small>
+<div class="container ">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <div>
+                Register
             </div>
-            <ng-template #show_email_err><small class="text-danger">{{registrationResponse.errorMessages?.emailErrorMsg}}</small></ng-template>
-        </div>
-        <div class="form-group mb-3">
-            <label for="username">Username</label>
-            <input type="text" required class="form-control" [ngClass]="registrationResponse.errorMessages?.usernameErrorMsg ? 'is-invalid' : ''" id="username" name="username" placeholder="Username" [(ngModel)]="user.username">
-            <div *ngIf="!registrationResponse.errorMessages?.usernameErrorMsg; else show_username_error">
-                <small class="form-text text-muted">The username will be your login credential.</small><br>
+            <div class="text-center">
+                <button class="btn btn-success" (click)="goToLogin()">Already registered? Login here</button>
             </div>
-            <ng-template #show_username_error><small class="text-danger">{{registrationResponse.errorMessages?.usernameErrorMsg}}</small></ng-template>
         </div>
-        <div class="form-group mb-3">
-            <label for="username">Name</label>
-            <input type="text" required class="form-control" [ngClass]="registrationResponse.errorMessages?.nameErrorMsg ? 'is-invalid' : ''" id="name" name="name" placeholder="Name" [(ngModel)]="user.name">
-            <small class="text-danger" *ngIf="registrationResponse.errorMessages?.nameErrorMsg">{{registrationResponse.errorMessages?.nameErrorMsg}}</small>
+        <div class="card-body">
+            <form (ngSubmit)="onSubmitRegister()" ngNativeValidate>
+                <div class="form-group mb-3">
+                    <label for="email">Email address</label>
+                    <input type="email" required class="form-control"
+                        [ngClass]="registrationResponse.errorMessages?.emailErrorMsg ? 'is-invalid' : ''" id="email"
+                        name="email" placeholder="Email Address" [(ngModel)]="user.email">
+                    <div *ngIf="!registrationResponse.errorMessages?.emailErrorMsg; else show_email_err">
+                        <small class="form-text text-muted">We'll never share your email with anyone else.</small>
+                    </div>
+                    <ng-template #show_email_err><small
+                            class="text-danger">{{registrationResponse.errorMessages?.emailErrorMsg}}</small>
+                    </ng-template>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="username">Username</label>
+                    <input type="text" required class="form-control"
+                        [ngClass]="registrationResponse.errorMessages?.usernameErrorMsg ? 'is-invalid' : ''"
+                        id="username" name="username" placeholder="Username" [(ngModel)]="user.username">
+                    <div *ngIf="!registrationResponse.errorMessages?.usernameErrorMsg; else show_username_error">
+                        <small class="form-text text-muted">The username will be your login credential.</small><br>
+                    </div>
+                    <ng-template #show_username_error><small
+                            class="text-danger">{{registrationResponse.errorMessages?.usernameErrorMsg}}</small>
+                    </ng-template>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="username">Name</label>
+                    <input type="text" required class="form-control"
+                        [ngClass]="registrationResponse.errorMessages?.nameErrorMsg ? 'is-invalid' : ''" id="name"
+                        name="name" placeholder="Name" [(ngModel)]="user.name">
+                    <small class="text-danger"
+                        *ngIf="registrationResponse.errorMessages?.nameErrorMsg">{{registrationResponse.errorMessages?.nameErrorMsg}}</small>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="password">Password</label>
+                    <input type="password" required class="form-control"
+                        [ngClass]="registrationResponse.errorMessages?.passwordErrorMsg ? 'is-invalid' : ''"
+                        id="password" name="password" placeholder="Password" [(ngModel)]="user.password">
+                    <small class="form-text text-muted">Your password should include at least 1 lower and upper case
+                        character, 1 digit and 2 special characters (#$%@).</small><br>
+                    <small class="text-danger"
+                        *ngIf="registrationResponse.errorMessages?.passwordErrorMsg">{{registrationResponse.errorMessages?.passwordErrorMsg}}</small>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" required class="form-control"
+                        [ngClass]="confirmPasswordErrorMessage ? 'is-invalid' : ''" id="confirmpassword"
+                        name="confirmPassword" placeholder="Confirm Password" [(ngModel)]="user.confirmPassword">
+                    <div *ngIf="confirmPasswordErrorMessage;else show_password_error">
+                        <small class="text-danger"
+                            *ngIf="confirmPasswordErrorMessage">{{confirmPasswordErrorMessage}}</small>
+                    </div>
+                    <ng-template #show_password_error><small id="emailHelp" class="form-text text-muted">Your password
+                            are protected.</small></ng-template>
+                </div>
+                <div class="form-group mb-3">
+                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                </div>
+            </form>
         </div>
-        <div class="form-group mb-3">
-            <label for="password">Password</label>
-            <input type="password" required class="form-control" [ngClass]="registrationResponse.errorMessages?.passwordErrorMsg ? 'is-invalid' : ''" id="password" name="password" placeholder="Password" [(ngModel)]="user.password">
-            <small class="form-text text-muted">Your password should include at least 1 lower and upper case character, 1 digit and 2 special characters (#$%@).</small><br>
-            <small class="text-danger" *ngIf="registrationResponse.errorMessages?.passwordErrorMsg">{{registrationResponse.errorMessages?.passwordErrorMsg}}</small>
-        </div>
-        <div class="form-group mb-3">
-            <label for="confirmPassword">Confirm Password</label>
-            <input type="password" required class="form-control" [ngClass]="confirmPasswordErrorMessage ? 'is-invalid' : ''" id="confirmpassword" name="confirmPassword" placeholder="Confirm Password" [(ngModel)]="user.confirmPassword">
-            <div *ngIf="confirmPasswordErrorMessage;else show_password_error">
-                <small class="text-danger" *ngIf="confirmPasswordErrorMessage">{{confirmPasswordErrorMessage}}</small>
-            </div>
-            <ng-template #show_password_error><small id="emailHelp" class="form-text text-muted" >Your password are protected.</small></ng-template>
-        </div>
-        <div class="form-group mb-3">
-            <button type="submit" class="btn btn-primary w-100">Register</button>
-        </div>
-    </form>
-    <div class="text-center">
-        <button class="btn btn-dark" (click)="goToLogin()">Already registered? Login here</button>
     </div>
 </div>
 <div *ngIf="showPopUpMessage">
-    <popup [showPopUp]="showPopUpMessage" 
-            [header]="registerHeaderMsg" 
-            [message]="registerMsg" 
-            (returnStatus)="getDisplayedStatus($event)"></popup>
+    <popup [showPopUp]="showPopUpMessage" [header]="registerHeaderMsg" [message]="registerMsg"
+        (returnStatus)="getDisplayedStatus($event)"></popup>
 </div>

@@ -1,7 +1,8 @@
-import { Component, OnChanges, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Account } from '../_models/account';
 import { AccountPagination } from '../_models/response/account-pagination';
 import { GenericResponse } from '../_models/response/generic-response';
+import { Status } from '../_models/status';
 import { AccountService } from '../_services/account.service';
 
 @Component({
@@ -28,7 +29,7 @@ export class AccountInfoComponent implements OnInit {
   ngOnInit(): void {
     this.getPaginationData(1)
     this.pageTracker.push(1)
-    if(this.totalElements! > 10) {
+    if (this.totalElements! > 10) {
       this.constant = 1
     } else {
       this.constant = 10
@@ -36,9 +37,9 @@ export class AccountInfoComponent implements OnInit {
   }
 
   verifyLoadStatus() {
-    if(!this.pageTracker.includes(this.pageNumber)) {
+    if (!this.pageTracker.includes(this.pageNumber)) {
       this.getPaginationData(this.pageNumber)
-    } 
+    }
   }
 
   getPaginationData(page: number) {
@@ -63,6 +64,41 @@ export class AccountInfoComponent implements OnInit {
           console.log("Total Elements: " + this.totalElements)
           console.log("Total Pages: " + this.totalPages)
         }
+      })
+  }
+
+  updateStatus(deleteFlag: number, id: number) {
+    console.log(deleteFlag)
+    console.log(id)
+    console.log(this.pageNumber - 1)
+    var status: number 
+    // if the current status is deleted, set to activate back
+    if (deleteFlag === 1) {
+      status = Status.ACTIVATE
+    } else {   // if the current status is active, set to deactivate
+      status = Status.DEACTIVATE
+    }
+
+    this.accountService.updateAccountStatus(id, status)
+      .subscribe({
+        next: (genericResponse: GenericResponse) => {
+          this.genericResponse = genericResponse
+          this.pageWithContent[this.pageNumber - 1]
+          // Update the status immediately when success
+          for(var content of this.pageWithContent[this.pageNumber -1]) {
+            if(content.id === id) {
+              content.deleteFlag = status
+            }
+          }
+          console.log(genericResponse)
+        },
+        error: (e) => {
+          this.genericResponse.httpStatus = e.error.httpStatus
+          this.genericResponse.message = e.error.message
+          this.genericResponse.timeStamp = e.error.timeStamp
+          console.log(e.error)
+        },
+        complete: () => { }
       })
   }
 }

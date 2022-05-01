@@ -26,12 +26,15 @@ export class ToastComponent implements OnInit {
   constructor(public jwtService: JWTService, private streamService: StreamService) { }
 
   ngOnInit(): void {
-    this.loadMedia(this.content?.mediaLink!)
-    this.hyperLinkUrl = this.streamService.checkYoutubeLink(this.content?.hyperLink!)
+    if (this.content?.mediaLink !== null) {
+      this.loadMedia(this.content?.mediaLink!)
+    }
+    if (this.content?.hyperLink !== null) {
+      this.hyperLinkUrl = this.streamService.checkYoutubeLink(this.content?.hyperLink!)
+    }
   }
 
   loadMedia(url: string) {
-    console.log("loading media")
     this.streamService.streamMedia(url)
       .subscribe({
         next: (fileResponse: FileResponse) => {

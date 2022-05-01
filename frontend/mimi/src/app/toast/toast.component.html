@@ -7,8 +7,8 @@
     </div>
     <div class="card-body">
         <h5 class="card-title">{{content?.caption}}</h5>
-        <object *ngIf="content?.hyperLink" width="100%" height="100vh" [data]="hyperLinkUrl"></object>
-        <object *ngIf="content?.mediaLink" width="100%" [data]="mediaLinkUrl"></object>
+        <object *ngIf="hyperLinkUrl" width="100%" height="100vh" [data]="hyperLinkUrl"></object>
+        <object *ngIf="mediaLinkUrl" width="100%" [data]="mediaLinkUrl"></object>
         <div class="card-footer text-muted d-flex flex-column">
             <small class="text-muted" *ngIf="content?.creationDate">Created On <b>{{content?.creationDate |date:'medium'}}</b></small>
             <small class="text-muted" *ngIf="content?.createdBy">Created By <b>{{content?.createdBy}}</b></small>

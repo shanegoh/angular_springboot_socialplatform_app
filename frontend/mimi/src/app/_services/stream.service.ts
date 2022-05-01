@@ -25,7 +25,6 @@ export class StreamService {
   }
 
   streamMedia(url: string) {
-    console.log("requesting for media")
     return this.http.get<FileResponse>(this.baseURL + `/api/post/stream/${url}`)
   }
   

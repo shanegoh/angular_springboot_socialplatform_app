@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Content } from '../_models/content';
 import { PostRequest } from '../_models/request/post-request';
@@ -10,9 +10,7 @@ import { PostService } from '../_services/post.service';
   templateUrl: './update-form.component.html',
   styleUrls: ['./update-form.component.css']
 })
-export class UpdateFormComponent implements OnInit {
-
-  ngOnInit(): void { }
+export class UpdateFormComponent implements OnInit, OnDestroy {
 
   myGroup: FormGroup
 
@@ -22,12 +20,20 @@ export class UpdateFormComponent implements OnInit {
 
   genericResponse: GenericResponse = new GenericResponse()
 
+  individualContent: Content | undefined
+
+  captionCannotBeEmpty: boolean | undefined
+  mediaLinkCannotBeEmpty: boolean | undefined
+
   constructor(private formBuilder: FormBuilder, private postService: PostService) {
     this.myGroup = this.formBuilder.group({
-      'caption': undefined,
-      'hyperLink': undefined,
+      'caption': '',
+      'hyperLink': '',
       'file': undefined
     });
+  }
+  ngOnDestroy(): void {
+    console.log( this.postContent)
   }
 
   @Input() postContent: Content | undefined
@@ -35,12 +41,24 @@ export class UpdateFormComponent implements OnInit {
   @Output() onClose = new EventEmitter<boolean>()
   @Output() throwResponse = new EventEmitter<string>()
 
+
+  ngOnInit(): void {
+    // shallow copy to prevent updating parent component
+    this.individualContent! = {...this.postContent!} 
+    if(this.individualContent.caption) {
+      console.log(true)
+      this.captionCannotBeEmpty = true
+    }
+  
+    if(this.individualContent.mediaLink)
+      this.mediaLinkCannotBeEmpty = true 
+  }
+
   onClickUpdate() {
-   
     const formData = new FormData();
-    this.postRequest.caption = this.postContent?.caption
-    this.postRequest.hyperLink = this.postContent?.hyperLink
-    this.postRequest.id = this.postContent?.id
+    this.postRequest.caption = this.individualContent?.caption
+    this.postRequest.hyperLink = this.individualContent?.hyperLink
+    this.postRequest.id = this.individualContent?.id
     
     if (this.fileToUpload !== undefined) {
       formData.append('media', this.fileToUpload!)

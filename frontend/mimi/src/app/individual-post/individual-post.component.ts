@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { SafeResourceUrl } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { FileResponse } from '../_models/response/file-response';
 import { GenericResponse } from '../_models/response/generic-response';
 import { PostResponse } from '../_models/response/post-response';
@@ -16,9 +16,6 @@ import { Content } from '../_models/content';
 })
 export class IndividualPostComponent implements OnInit {
 
-  // shut the modal
-  display = "block";
-
   onClickClosePost() {
     this.destroyPostComponent.emit(true)
   }
@@ -30,7 +27,6 @@ export class IndividualPostComponent implements OnInit {
 
   postResponse: PostResponse = new PostResponse();
   content: Content | undefined
-
   hyperLinkUrl: SafeResourceUrl | undefined;
   mediaLinkUrl: SafeResourceUrl | undefined;
 
@@ -49,16 +45,18 @@ export class IndividualPostComponent implements OnInit {
   disableUpdateBtn = true;
 
   ngOnInit(): void {
-    this.loadOnePost(this.individualPostId!)
+    this.loadOnePost()
   }
 
-  loadOnePost(id: number) {
+  loadOnePost() {
     this.postService.getOnePost(this.individualPostId!)
       .subscribe({
         next: (postResponse: PostResponse) => {
           this.content = postResponse.postObject
           console.log(postResponse)
-          this.loadMedia(this.content?.mediaLink!)
+          if(this.content?.mediaLink !== null) {
+            this.loadMedia(this.content?.mediaLink!)
+          }
           this.hyperLinkUrl = this.streamService.checkYoutubeLink(this.content?.hyperLink!)
         },
         error: (e) => {
