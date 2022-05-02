@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Content } from '../_models/content';
 import { PostRequest } from '../_models/request/post-request';
 import { GenericResponse } from '../_models/response/generic-response';
@@ -12,7 +12,7 @@ import { PostService } from '../_services/post.service';
 })
 export class UpdateFormComponent implements OnInit, OnDestroy {
 
-  myGroup: FormGroup
+  myGroup: FormGroup | undefined
 
   fileToUpload: File | undefined;
 
@@ -22,18 +22,10 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
 
   individualContent: Content | undefined
 
-  captionCannotBeEmpty: boolean | undefined
-  mediaLinkCannotBeEmpty: boolean | undefined
-
   constructor(private formBuilder: FormBuilder, private postService: PostService) {
-    this.myGroup = this.formBuilder.group({
-      'caption': '',
-      'hyperLink': '',
-      'file': undefined
-    });
   }
   ngOnDestroy(): void {
-    console.log( this.postContent)
+    console.log(this.postContent)
   }
 
   @Input() postContent: Content | undefined
@@ -44,14 +36,13 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // shallow copy to prevent updating parent component
-    this.individualContent! = {...this.postContent!} 
-    if(this.individualContent.caption) {
-      console.log(true)
-      this.captionCannotBeEmpty = true
-    }
-  
-    if(this.individualContent.mediaLink)
-      this.mediaLinkCannotBeEmpty = true 
+    this.individualContent! = { ...this.postContent! }
+    console.log(this.individualContent)
+    this.myGroup = this.formBuilder.group({
+      'caption': '',
+      'hyperLink': '',
+      'file': '',
+    });
   }
 
   onClickUpdate() {
@@ -59,7 +50,7 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
     this.postRequest.caption = this.individualContent?.caption
     this.postRequest.hyperLink = this.individualContent?.hyperLink
     this.postRequest.id = this.individualContent?.id
-    
+
     if (this.fileToUpload !== undefined) {
       formData.append('media', this.fileToUpload!)
     }
@@ -73,7 +64,6 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (genericResponse: GenericResponse) => {
           this.genericResponse = genericResponse
-          console.log("set responseed")
         },
         error: (e) => {
           this.genericResponse.httpStatus = e.error.httpStatus
@@ -95,6 +85,21 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
     if (files) {
       console.log("FileUpload -> files", files[0]);
       this.fileToUpload = files[0]
+    }
+  }
+
+  checkValid() {
+    // Check if same as original content
+    if ((this.myGroup?.get('file')!.value !== '') || (this.myGroup?.get('caption')!.value !== '' && this.myGroup?.get('caption')!.value !== this.postContent?.caption)
+      || (this.myGroup?.get('hyperLink')!.value && this.myGroup?.get('hyperLink')!.value !== this.postContent?.hyperLink)) {
+      if (this.myGroup?.get('caption')!.value !== '' || this.myGroup?.get('hyperLink')!.value !== '' ||
+        this.myGroup?.get('caption')!.value !== null || this.myGroup?.get('hyperLink')!.value !== null) {
+        return false;
+      } else {
+        return true
+      }
+    } else {
+      return true;
     }
   }
 }

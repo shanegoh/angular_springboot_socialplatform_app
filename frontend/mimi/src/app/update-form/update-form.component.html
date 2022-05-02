@@ -1,20 +1,22 @@
 <div class="container d-flex flex-column" *ngIf="individualContent">
-    <form [formGroup]="myGroup">
+    <form [formGroup]="myGroup!" (ngsubmit)="onClickUpdate()" ngNativeValidate #form>
         <div class="form-group">
-            <textarea placeholder="Max 50 characters" [required]="this.captionCannotBeEmpty!" formControlName="caption" maxlength="50" id="caption" name="caption" [(ngModel)]="individualContent.caption" ></textarea>
+            <textarea placeholder="Max 50 characters" formControlName="caption" maxlength="50" id="caption"
+                name="caption" [(ngModel)]="individualContent.caption"></textarea>
         </div>
         <div class="form-group">
-          <input type="text" class="form-control" [required]="this.mediaLinkCannotBeEmpty!" formControlName="hyperLink" maxlength="500" id="hyperLink" name="hypnerLink" placeholder="Share a link" [(ngModel)]="individualContent.hyperLink">
+            <input type="text" class="form-control" formControlName="hyperLink" maxlength="500" id="hyperLink"
+                name="hyperLink" placeholder="Share a link" [(ngModel)]="individualContent.hyperLink">
         </div>
         <div class="form-group pt-2">
             <input type="file" class="form-control-file" id="file" name="file" formControlName="file"
-            (change)="handleFileInput($event)" accept=".png,.jpeg,.jpg,.png,.mp4" >
-            <small>PNG, JPEG, JPG, MP4</small>
+                (change)="handleFileInput($event)" accept=".png,.jpeg,.jpg,.png,.mp4">
+            <small>PNG, JPEG, JPG, MP4</small><br>
+            <small class="text-muted">File Status: {{individualContent.mediaLink ? 'Exist' : 'None'}}</small>
         </div>
         <div class="form-group pt-2 pb-2 d-flex justify-content-end">
-            <button class="btn btn-danger" type="submit" (click)="onClickUpdate()"
-            [disabled]="this.individualContent.caption === this.postContent?.caption &&
-                        this.individualContent.mediaLink === this.postContent?.mediaLink">Update</button>
+            <button class="btn btn-danger" type="submit" (click)="onClickUpdate()" [disabled]="
+                        checkValid()">Update</button>
         </div>
     </form>
 </div>
