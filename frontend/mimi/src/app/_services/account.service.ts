@@ -22,4 +22,8 @@ export class AccountService {
   updateAccountStatus(id: number, status: number) {
     return this.http.put<GenericResponse>(`${this.baseURL}/api/admin/updateAccountStatus/${id}/${status}`,{})
   }
+
+  searchAccountByKeyword(page: number, searchText: string) {
+    return this.http.get<AccountPagination>(`${this.baseURL}/api/admin/searchAccount/${searchText}/page/${page}`)
+  }
 }

@@ -29,4 +29,10 @@ public class AccountController {
         GenericResponseInterface genericResponseInterface = userServiceInterface.getAllUserAccount(pageNumber);
         return new ResponseEntity<>(genericResponseInterface, genericResponseInterface.getHttpStatus());
     }
+
+    @GetMapping("/searchAccount/{searchText}/page/{page-number}")
+    public ResponseEntity searchAccount(@PathVariable("searchText") String searchText, @PathVariable("page-number") Integer pageNumber) {
+        GenericResponseInterface genericResponseInterface = userServiceInterface.searchAccountByKeyword(pageNumber, searchText);
+        return new ResponseEntity<>(genericResponseInterface, genericResponseInterface.getHttpStatus());
+    }
 }

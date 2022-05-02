@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Account } from '../_models/account';
 import { AccountPagination } from '../_models/response/account-pagination';
 import { GenericResponse } from '../_models/response/generic-response';
@@ -24,9 +25,15 @@ export class AccountInfoComponent implements OnInit {
 
   genericResponse: GenericResponse = new GenericResponse();
 
+  searchText: string = ''
+
   constructor(private accountService: AccountService) { }
 
   ngOnInit(): void {
+    this.onLoad()
+  }
+
+  onLoad() {
     this.getPaginationData(1)
     this.pageTracker.push(1)
     if (this.totalElements! > 10) {
@@ -68,10 +75,7 @@ export class AccountInfoComponent implements OnInit {
   }
 
   updateStatus(deleteFlag: number, id: number) {
-    console.log(deleteFlag)
-    console.log(id)
-    console.log(this.pageNumber - 1)
-    var status: number 
+    var status: number
     // if the current status is deleted, set to activate back
     if (deleteFlag === 1) {
       status = Status.ACTIVATE
@@ -85,8 +89,8 @@ export class AccountInfoComponent implements OnInit {
           this.genericResponse = genericResponse
           this.pageWithContent[this.pageNumber - 1]
           // Update the status immediately when success
-          for(var content of this.pageWithContent[this.pageNumber -1]) {
-            if(content.id === id) {
+          for (var content of this.pageWithContent[this.pageNumber - 1]) {
+            if (content.id === id) {
               content.deleteFlag = status
             }
           }
@@ -100,5 +104,39 @@ export class AccountInfoComponent implements OnInit {
         },
         complete: () => { }
       })
+  }
+
+  searchPagination(page: number, searchValue: string) {
+    this.pageTracker.push(page)
+    this.accountService.searchAccountByKeyword(page, searchValue)
+      .subscribe({
+        next: (accountPagination: AccountPagination) => {
+          this.pageWithContent[page - 1] = accountPagination.pagination?.content!
+          this.last = accountPagination.pagination?.last
+          this.totalElements = accountPagination.pagination?.totalElements
+          this.totalPages = accountPagination.pagination?.totalPages
+          this.numberOfElements = accountPagination.pagination?.numberOfElements
+          console.log(this.pageWithContent)
+        },
+        error: (e) => {
+          this.genericResponse.httpStatus = e.error.httpStatus
+          this.genericResponse.message = e.error.message
+          this.genericResponse.timeStamp = e.error.timeStamp
+        },
+        complete: () => {
+          console.log("Last Page: " + this.last);
+          console.log("Total Elements: " + this.totalElements)
+          console.log("Total Pages: " + this.totalPages)
+        }
+      })
+  }
+
+  activateSearch(event: Event) {
+    console.log(this.searchText)
+    if (this.searchText !== '')
+      this.searchPagination(1, this.searchText)
+    else {
+      this.onLoad()
+    }
   }
 }

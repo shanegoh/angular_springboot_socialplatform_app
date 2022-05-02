@@ -1,5 +1,6 @@
 package com.dxc.production.mimi.service;
 
+import com.dxc.production.mimi.dao.PostRepo;
 import com.dxc.production.mimi.dto.AccountDTO;
 import com.dxc.production.mimi.dto.PostDTO;
 import com.dxc.production.mimi.dto.RegistrationErrorDTO;
@@ -39,6 +40,7 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 @Service
+@Transactional
 public class UserService implements UserServiceInterface {
 
     @Autowired
@@ -55,6 +57,9 @@ public class UserService implements UserServiceInterface {
 
     @Autowired
     private JwtUtil jwtTokenUtil;
+
+    @Autowired
+    private PostRepo postRepo;
 
     @Override
     public UserDTO getUserInformation() {
@@ -104,7 +109,7 @@ public class UserService implements UserServiceInterface {
             return new RegistrationResponse("Username exist, please try another.", HttpStatus.CONFLICT, registrationErrorDTO);
         } else if (Objects.nonNull(checkEmailExist)) {  // Show response when email is exist
             registrationErrorDTO.setEmailErrorMsg(Message.EMAIL_EXIST.getMessage());
-            return new RegistrationResponse("Email exist, please try another.", HttpStatus.CONFLICT,registrationErrorDTO);
+            return new RegistrationResponse("Email exist, please try another.", HttpStatus.CONFLICT, registrationErrorDTO);
         }
         // Start to validate all information
         boolean registrationResult = validateRegistrationUser(registrationRequest, registrationErrorDTO);
@@ -126,13 +131,14 @@ public class UserService implements UserServiceInterface {
                 return new GenericResponse("Unable to create. Please try again later.", HttpStatus.BAD_REQUEST);
             }
         } else {
-            return new RegistrationResponse("Multiple Invalid Fields", HttpStatus.CONFLICT,registrationErrorDTO);
+            return new RegistrationResponse("Multiple Invalid Fields", HttpStatus.CONFLICT, registrationErrorDTO);
         }
     }
 
     @Override
     public GenericResponse updateAccountStatusById(Long id, String username, Integer status) {
         try {
+            postRepo.updatePostStatusByUsername(username, status);
             UserEntity userEntity = userRepo.findById(id.longValue());
             userEntity.setDeleteFlag(Status.valueToRole(status).getValue()); // update to active account
             userEntity.setLastModifiedBy(username); // set modified username
@@ -140,7 +146,7 @@ public class UserService implements UserServiceInterface {
 
             return new GenericResponse("Successfully updated user status.", HttpStatus.OK);
         } catch (Exception e) {
-            return new GenericResponse("Error. Unable to update user status.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new GenericResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -150,7 +156,30 @@ public class UserService implements UserServiceInterface {
         try {
             Pageable pageable = PageRequest.of(pageNumber - 1, 10); // Set page size
             Page<UserEntity> userEntityList = userRepo.findAll(pageable);       // Retrieve records for certain page
-            if(userEntityList.isEmpty())
+            if (userEntityList.isEmpty())
+                return new GenericResponse("No more records.", HttpStatus.NOT_FOUND);
+
+            // Copy to PostDTO
+            for (UserEntity userEntity : userEntityList) {
+                AccountDTO accountDTO = new AccountDTO();
+                BeanUtils.copyProperties(userEntity, accountDTO);
+                accountDTOList.add(accountDTO);
+            }
+            return new PostResponse<>("Successfully retrieve all record(s).",
+                    HttpStatus.OK, new PageImpl<AccountDTO>(accountDTOList, pageable, userEntityList.getTotalElements()));
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return new GenericResponse("Unable to load record(s).", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public GenericResponse searchAccountByKeyword(Integer pageNumber, String searchText) {
+        List<AccountDTO> accountDTOList = new ArrayList<>();
+        try {
+            Pageable pageable = PageRequest.of(pageNumber - 1, 10); // Set page size
+            Page<UserEntity> userEntityList = userRepo.searchAccountByKeyword(pageable, searchText);       // Retrieve records for certain page
+            if (userEntityList.isEmpty())
                 return new GenericResponse("No more records.", HttpStatus.NOT_FOUND);
 
             // Copy to PostDTO

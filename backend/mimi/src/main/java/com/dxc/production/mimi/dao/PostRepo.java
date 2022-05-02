@@ -4,8 +4,10 @@ import com.dxc.production.mimi.model.PostEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface PostRepo extends JpaRepository<PostEntity, Long> {
@@ -18,6 +20,7 @@ public interface PostRepo extends JpaRepository<PostEntity, Long> {
 
     PostEntity findById(long id);
 
-//    @Query("SELECT p FROM PostEntity p WHERE p.deleteFlag = 0 AND id = :id ORDER BY p.id DESC") // 0 = not deleted
-//    PostEntity findActivePostOrderByIdDesc(long id);
+    @Modifying
+    @Query("UPDATE PostEntity p SET p.deleteFlag = :deleteFlag WHERE p.username = :username")
+    void updatePostStatusByUsername(String username, int deleteFlag);
 }

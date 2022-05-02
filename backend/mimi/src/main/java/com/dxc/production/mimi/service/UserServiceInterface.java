@@ -4,6 +4,7 @@ import com.dxc.production.mimi.dto.UserDTO;
 import com.dxc.production.mimi.model.request.AuthenticationRequest;
 import com.dxc.production.mimi.model.request.RegistrationRequest;
 import com.dxc.production.mimi.model.response.GenericResponse;
+import net.bytebuddy.description.type.TypeList;
 
 public interface UserServiceInterface {
     UserDTO getUserInformation();
@@ -15,4 +16,6 @@ public interface UserServiceInterface {
     GenericResponse updateAccountStatusById(Long id, String username, Integer status);
 
     GenericResponse getAllUserAccount(Integer pageNumber);
+
+    GenericResponse searchAccountByKeyword(Integer pageNumber, String searchText);
 }

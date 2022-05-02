@@ -1,5 +1,13 @@
 <div class="container-fluid pt-5">
     <div>
+        <div>
+            <!-- Search form -->
+            <form class="form-inline waves-light" mdbWavesEffect>
+                <div class="md-form mt-0">
+                    <input class="form-control mr-sm-2" type="text" name="searchText" placeholder="Search username, email or name" (input)="activateSearch($event)" [(ngModel)]="searchText">
+                </div>
+            </form>
+        </div>
         <table class="table table-hover fontSize">
             <thead class="thead-dark">
                 <tr>
@@ -29,7 +37,8 @@
                     <td>{{content.deleteFlag === 0 ? "ACTIVE" : "DELETED"}}</td>
                     <td>
                         <button [ngClass]="[content.deleteFlag === 0 ? 'btn-danger' : 'btn-warning']"
-                            (click)="updateStatus(content.deleteFlag!, content.id!)" class="btn btn-primary">{{content.deleteFlag === 1 ?
+                            (click)="updateStatus(content.deleteFlag!, content.id!)"
+                            class="btn btn-primary">{{content.deleteFlag === 1 ?
                             "ACTIVATE": "DEACTIVATE"}}
                         </button>
                     </td>

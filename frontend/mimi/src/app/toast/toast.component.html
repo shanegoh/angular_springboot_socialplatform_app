@@ -14,7 +14,7 @@
             <small class="text-muted" *ngIf="content?.createdBy">Created By <b>{{content?.createdBy}}</b></small>
             <small class="text-muted" *ngIf="content?.lastModifiedBy">Last Modified By <b>{{content?.lastModifiedBy}}</b></small>
             <small class="text-muted" *ngIf="content?.lastModifiedDate">Last Modified On <b>{{content?.lastModifiedDate| date:'medium'}}</b></small>
-            <small class="text-muted" *ngIf="content?.deleteFlag">Status <b>{{content?.deleteFlag === 1 ? 'DELETED' :'ACTIVE'}}</b></small>
+            <small class="text-muted" *ngIf="content?.deleteFlag === 1 || content?.deleteFlag === 0">Status <b>{{content?.deleteFlag === 1 ? 'DELETED' : 'ACTIVE' }}</b></small>
         </div>
     </div>
 </div>
