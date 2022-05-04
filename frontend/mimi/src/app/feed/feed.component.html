@@ -1,8 +1,8 @@
-<div class="bg-black pt-2">
-    <add-post 
-    *ngIf="this.jwtService.isAdmin() === false"
-    class="addPostBtn" (updateFeedToShowForm)="updatePostFormStatus($event)"></add-post>
+<div class="pt-2">
+    <add-post *ngIf="this.jwtService.isAdmin() === false" class="addPostBtn"
+        (updateFeedToShowForm)="updatePostFormStatus($event)"></add-post>
 
+    <refresh (reload)="reload($event)" class="refreshBtn"></refresh>
     <post-form *ngIf="openPostForm" (throwNotification)="displayNotification($event)"
         (throwResponse)="updateResponse($event)" (onClose)="closePostForm($event)">
     </post-form>
@@ -11,17 +11,15 @@
         (onCloseNotification)="closeNotification($event)">
     </notification>
 
-    <div class="container w-50 bg-black pt-5 pb-5">
+    <div class="container w-50 pt-5 pb-5">
         <div *ngFor="let eachContent of contentList">
-            <toast (throwPostIdToFeed)="getPostId($event)" [content]="eachContent" ></toast>
+            <toast (throwPostIdToFeed)="getPostId($event)" [content]="eachContent"></toast>
         </div>
     </div>
     <div class="container post" *ngIf="postId && showIndividualPost">
-        <individual-post [individualPostId]="postId" 
-        (destroyPostComponent)="componentToDestroy($event)"
-        (throwNotification)="displayNotification($event)"
-        (throwResponse)="updateResponse($event)"
-        >
+        <individual-post [individualPostId]="postId" (destroyPostComponent)="componentToDestroy($event)"
+            (throwNotification)="displayNotification($event)" (throwResponse)="updateResponse($event)">
         </individual-post>
     </div>
 </div>
+<loading *ngIf="loadingStatus" class="loading"></loading>

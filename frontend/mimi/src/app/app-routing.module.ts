@@ -5,12 +5,14 @@ import { IndividualPostComponent } from './individual-post/individual-post.compo
 import { LoginComponent } from './login/login.component';
 import { MainComponent } from './main/main.component';
 import { ManageUserComponent } from './manage-user/manage-user.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { RegisterComponent } from './register/register.component';
 import { UserHomeComponent } from './user-home/user-home.component';
 import { AuthGuard } from './_helpers/auth.guard';
 import { Role } from './_models/role';
 
 const routes: Routes = [
+  { path: '', redirectTo: 'main', pathMatch: 'full'},
   { path: 'main',
     component: MainComponent
   },
@@ -26,7 +28,7 @@ const routes: Routes = [
   },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  // { path: '**', redirectTo: '' }
+  { path: '**', component: PageNotFoundComponent }
 ];
 
 @NgModule({

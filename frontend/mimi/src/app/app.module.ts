@@ -24,6 +24,9 @@ import { UpdateFormComponent } from './update-form/update-form.component';
 import { AdminHomeComponent } from './admin-home/admin-home.component';
 import { ManageUserComponent } from './manage-user/manage-user.component';
 import { AccountInfoComponent } from './account-info/account-info.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { RefreshComponent } from './refresh/refresh.component';
+import { LoadingComponent } from './loading/loading.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +47,10 @@ import { AccountInfoComponent } from './account-info/account-info.component';
     UpdateFormComponent,
     AdminHomeComponent,
     ManageUserComponent,
-    AccountInfoComponent
+    AccountInfoComponent,
+    PageNotFoundComponent,
+    RefreshComponent,
+    LoadingComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,4 @@
-<div class="container ">
+<div class="container cardProp">
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             <div>
@@ -12,18 +12,21 @@
         <div class="card-body">
             <form (ngSubmit)="onSubmitLogin()" ngNativeValidate>
                 <div class="form-group mb-4">
-                    <input type="text" required class="form-control" [ngClass]="genericResponse.message ? 'is-invalid': '' " id="username" name="username"
+                    <input type="text" class="form-control"
+                        [ngClass]="genericResponse.message ? 'is-invalid': '' " id="username" name="username"
                         placeholder="Username" maxlength="50" [(ngModel)]="user.username">
                 </div>
                 <div class="form-group mb-2">
-                    <input type="password" required class="form-control" [ngClass]="genericResponse.message ? 'is-invalid': '' " id="password" name="password"
+                    <input type="password" class="form-control"
+                        [ngClass]="genericResponse.message ? 'is-invalid': '' " id="password" name="password"
                         placeholder="Password" maxlength="16" [(ngModel)]="user.password">
                 </div>
                 <div class="form-group mb-1 text-center" *ngIf="genericResponse.message">
                     <small class="text-danger">{{genericResponse.message}}</small>
                 </div>
                 <div class="form-group text-center">
-                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                    <button [disabled]="user.username === undefined || user.username === '' ||
+                    user.password === undefined || user.password === ''" type="submit" class="btn btn-primary w-100">Login</button>
                 </div>
             </form>
         </div>

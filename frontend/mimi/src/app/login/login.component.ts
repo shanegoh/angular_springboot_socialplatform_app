@@ -22,10 +22,12 @@ export class LoginComponent implements OnInit {
   constructor(
     private authenticationService: AuthenticationService,
     private jwtService: JWTService,
-    private router: Router) {
+    private router: Router,
+    private formBuilder: FormBuilder) {
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
   // subscribe for jwt by calling AuthenticationService login method
   onSubmitLogin() {
@@ -35,20 +37,22 @@ export class LoginComponent implements OnInit {
           next: (authenticationResponse: AuthenticationResponse) => {
             this.jwtService.setTokenDetails(authenticationResponse.jsonWebToken!) // set token details
             // redirect to page base on the role.
-            if(this.jwtService.isAdmin()) {
-              this.router.navigate(['/admin']) 
+            if (this.jwtService.isAdmin()) {
+              this.router.navigate(['/admin'])
             } else {
-              this.router.navigate(['/user']) 
+              this.router.navigate(['/user'])
             }
           },
           error: (e) => {
-            console.error( this.genericResponse = e.error)
+            console.error(this.genericResponse = e.error)
             this.genericResponse.getHttpStatus = e.error.httpStatus
             this.genericResponse.message = e.error.message
             this.genericResponse.timeStamp = e.error.timeStamp
           },
           complete: () => console.log("Role -> " + this.jwtService.getRole())
         })
+    } else {
+      console.log("No username or password")
     }
   }
 

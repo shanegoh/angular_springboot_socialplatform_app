@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,5 +23,5 @@ public interface PostRepo extends JpaRepository<PostEntity, Long> {
 
     @Modifying
     @Query("UPDATE PostEntity p SET p.deleteFlag = :deleteFlag WHERE p.username = :username")
-    void updatePostStatusByUsername(String username, int deleteFlag);
+    Integer updatePostStatusByUsername(String username, int deleteFlag);
 }

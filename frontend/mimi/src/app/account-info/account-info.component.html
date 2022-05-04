@@ -1,10 +1,14 @@
 <div class="container-fluid pt-5">
+    <refresh (reload)="reload($event)" class="refreshBtn btn-sm"></refresh>
+    <loading *ngIf="loadingStatus" class="loading"></loading>
     <div>
         <div>
             <!-- Search form -->
             <form class="form-inline waves-light" mdbWavesEffect>
                 <div class="md-form mt-0">
-                    <input class="form-control mr-sm-2" type="text" name="searchText" placeholder="Search username, email or name" (input)="activateSearch($event)" [(ngModel)]="searchText">
+                    <input class="form-control mr-sm-2" type="text" name="searchText"
+                        placeholder="Search username, email or name" (input)="activateSearch($event)"
+                        [(ngModel)]="searchText">
                 </div>
             </form>
         </div>

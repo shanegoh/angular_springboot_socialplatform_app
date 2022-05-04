@@ -20,7 +20,7 @@ export class AccountInfoComponent implements OnInit {
   numberOfElements: number | undefined
   pageWithContent: Account[][] = [];
   pageTracker: number[] = []
-
+  loadingStatus = false;
   constant: number | undefined
 
   genericResponse: GenericResponse = new GenericResponse();
@@ -34,6 +34,7 @@ export class AccountInfoComponent implements OnInit {
   }
 
   onLoad() {
+    this.loadingStatus = true
     this.getPaginationData(1)
     this.pageTracker.push(1)
     if (this.totalElements! > 10) {
@@ -60,6 +61,7 @@ export class AccountInfoComponent implements OnInit {
           this.totalPages = accountPagination.pagination?.totalPages
           this.numberOfElements = accountPagination.pagination?.numberOfElements
           console.log(this.pageWithContent)
+          this.loadingStatus = false;
         },
         error: (e) => {
           this.genericResponse.httpStatus = e.error.httpStatus
@@ -117,6 +119,7 @@ export class AccountInfoComponent implements OnInit {
           this.totalPages = accountPagination.pagination?.totalPages
           this.numberOfElements = accountPagination.pagination?.numberOfElements
           console.log(this.pageWithContent)
+          this.loadingStatus = false;
         },
         error: (e) => {
           this.genericResponse.httpStatus = e.error.httpStatus
@@ -132,11 +135,17 @@ export class AccountInfoComponent implements OnInit {
   }
 
   activateSearch(event: Event) {
+    this.loadingStatus = true
     console.log(this.searchText)
     if (this.searchText !== '')
       this.searchPagination(1, this.searchText)
     else {
       this.onLoad()
     }
+  }
+
+  reload(value: boolean) {
+    this.loadingStatus = true
+    this.onLoad()
   }
 }

@@ -2,7 +2,14 @@
 {
   display: block;
   height: 100vh;
-  padding-top: 5vh;
-  background: #000;
+  background-image: url("../background.png");
 }
 
+.cardProp {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  width: 75vw;
+}

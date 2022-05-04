@@ -12,3 +12,19 @@
 .fontSize {
     font-size: smaller;
 }
+
+.loading {
+  position: fixed;
+  float: right;
+  top: 50%;
+  right: 50%;
+  z-index: 1;
+}
+
+.refreshBtn {
+  position: fixed;
+  float: right;
+  top: 5%;
+  right: 5%;
+  z-index: 1;
+}

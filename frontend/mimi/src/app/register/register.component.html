@@ -1,4 +1,4 @@
-<div class="container ">
+<div class="container cardProp">
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             <div>
@@ -12,7 +12,7 @@
             <form (ngSubmit)="onSubmitRegister()" ngNativeValidate>
                 <div class="form-group mb-3">
                     <label for="email">Email address</label>
-                    <input type="email" required class="form-control"
+                    <input type="email" class="form-control" maxlength="50"
                         [ngClass]="registrationResponse.errorMessages?.emailErrorMsg ? 'is-invalid' : ''" id="email"
                         name="email" placeholder="Email Address" [(ngModel)]="user.email">
                     <div *ngIf="!registrationResponse.errorMessages?.emailErrorMsg; else show_email_err">
@@ -24,37 +24,38 @@
                 </div>
                 <div class="form-group mb-3">
                     <label for="username">Username</label>
-                    <input type="text" required class="form-control"
+                    <input type="text" class="form-control" maxlength="50" minlength="8"
                         [ngClass]="registrationResponse.errorMessages?.usernameErrorMsg ? 'is-invalid' : ''"
-                        id="username" name="username" placeholder="Username" [(ngModel)]="user.username">
+                        id="username" name="username" placeholder="Min. 8 characters" [(ngModel)]="user.username">
                     <div *ngIf="!registrationResponse.errorMessages?.usernameErrorMsg; else show_username_error">
-                        <small class="form-text text-muted">The username will be your login credential.</small><br>
+                        <small class="form-text text-muted">This username will be your login credential.</small><br>
                     </div>
                     <ng-template #show_username_error><small
                             class="text-danger">{{registrationResponse.errorMessages?.usernameErrorMsg}}</small>
                     </ng-template>
                 </div>
                 <div class="form-group mb-3">
-                    <label for="username">Name</label>
-                    <input type="text" required class="form-control"
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" maxlength="50"
                         [ngClass]="registrationResponse.errorMessages?.nameErrorMsg ? 'is-invalid' : ''" id="name"
                         name="name" placeholder="Name" [(ngModel)]="user.name">
+                    <small class="form-text text-muted">Everyone will be able to see this name.</small><br>
                     <small class="text-danger"
                         *ngIf="registrationResponse.errorMessages?.nameErrorMsg">{{registrationResponse.errorMessages?.nameErrorMsg}}</small>
                 </div>
                 <div class="form-group mb-3">
                     <label for="password">Password</label>
-                    <input type="password" required class="form-control"
+                    <input type="password" class="form-control" maxlength="16" minlength="8"
                         [ngClass]="registrationResponse.errorMessages?.passwordErrorMsg ? 'is-invalid' : ''"
-                        id="password" name="password" placeholder="Password" [(ngModel)]="user.password">
+                        id="password" name="password" placeholder="8 - 16 characters" [(ngModel)]="user.password">
                     <small class="form-text text-muted">Your password should include at least 1 lower and upper case
-                        character, 1 digit and 2 special characters (#$%@).</small><br>
+                        character, 1 digit and 2 of these special characters (#$%@).</small><br>
                     <small class="text-danger"
                         *ngIf="registrationResponse.errorMessages?.passwordErrorMsg">{{registrationResponse.errorMessages?.passwordErrorMsg}}</small>
                 </div>
                 <div class="form-group mb-3">
                     <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" required class="form-control"
+                    <input type="password" class="form-control" maxlength="16" minlength="8"
                         [ngClass]="confirmPasswordErrorMessage ? 'is-invalid' : ''" id="confirmpassword"
                         name="confirmPassword" placeholder="Confirm Password" [(ngModel)]="user.confirmPassword">
                     <div *ngIf="confirmPasswordErrorMessage;else show_password_error">
@@ -65,7 +66,16 @@
                             are protected.</small></ng-template>
                 </div>
                 <div class="form-group mb-3">
-                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                    <button [disabled]="user.email === undefined || 
+                    user.username === undefined || 
+                    user.name === undefined || 
+                    user.password === undefined ||
+                    user.confirmPassword === undefined || 
+                    user.email === '' || 
+                    user.username === '' || 
+                    user.name === '' || 
+                    user.password === '' ||
+                    user.confirmPassword === ''" type="submit" class="btn btn-primary w-100">Register</button>
                 </div>
             </form>
         </div>

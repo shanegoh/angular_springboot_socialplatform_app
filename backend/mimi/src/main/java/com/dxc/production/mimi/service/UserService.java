@@ -138,7 +138,7 @@ public class UserService implements UserServiceInterface {
     @Override
     public GenericResponse updateAccountStatusById(Long id, String username, Integer status) {
         try {
-            postRepo.updatePostStatusByUsername(username, status);
+            Integer x = postRepo.updatePostStatusByUsername(username, status);
             UserEntity userEntity = userRepo.findById(id.longValue());
             userEntity.setDeleteFlag(Status.valueToRole(status).getValue()); // update to active account
             userEntity.setLastModifiedBy(username); // set modified username

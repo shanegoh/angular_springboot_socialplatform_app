@@ -22,6 +22,8 @@ export class FeedComponent implements OnInit {
   totalPages: number | undefined
   genericResponse: GenericResponse = new GenericResponse();
 
+  loadingStatus = false;
+
   // Data used by the ngIf to display the child component (postForm)
   openPostForm = false; 
 
@@ -56,6 +58,7 @@ export class FeedComponent implements OnInit {
         this.last = postPagination.pagination?.last
         this.totalElements = postPagination.pagination?.totalElements
         this.totalPages = postPagination.pagination?.totalPages
+        this.loadingStatus = false
       },
       error: (e) => {               
         this.genericResponse.httpStatus = e.error.httpStatus
@@ -80,6 +83,7 @@ export class FeedComponent implements OnInit {
         this.last = postPagination.pagination?.last
         this.totalElements = postPagination.pagination?.totalElements
         this.totalPages = postPagination.pagination?.totalPages
+        this.loadingStatus = false
       },
       error: (e) => {               
         this.genericResponse.httpStatus = e.error.httpStatus
@@ -109,6 +113,7 @@ export class FeedComponent implements OnInit {
 
   // Get generic response from (post-form) component
   updateResponse(message: string) {
+    this.loadingStatus = true
     // reset
     this.notificationMessage = message
     this.contentList = []
@@ -140,6 +145,17 @@ export class FeedComponent implements OnInit {
     this.showIndividualPost = !value;
   }
 
+  reload(value: boolean) {
+    this.loadingStatus = true
+    this.contentList = []
+    this.pageNumber = 0
+    if(this.jwtService.isAdmin()) {
+      this.getPaginationDataAdmin()
+    } else {
+      this.getPaginationData()
+    }
+  }
+
   @HostListener('scroll')
   public asd(): void {
   console.log('scrolling');
@@ -148,7 +164,7 @@ export class FeedComponent implements OnInit {
   // Listen for end of page then scroll down
   @HostListener('window:scroll', ['$event'])
   onWindowScroll(event: WindowEventHandlers) {
-    if (window.innerHeight + window.scrollY  + .5 >= document.body.scrollHeight) {
+    if (window.innerHeight + window.scrollY  + 0.4 >= document.body.scrollHeight) {
       console.log("??")
       if(!this.last) {
         console.log("loading..")

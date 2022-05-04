@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RegistrationResponse } from '../_models/response/registration-response';
 import { User } from '../_models/user';
@@ -24,8 +25,7 @@ export class RegisterComponent implements OnInit {
 
   constructor(private router: Router, private registrationService: RegistrationService) { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   getDisplayedStatus(status: boolean) {
     if(status) {  // if status is true -> means modal is closed. Proceed to login
@@ -35,6 +35,8 @@ export class RegisterComponent implements OnInit {
 
   // subscribe for creation account status from register method
   onSubmitRegister() {
+    // clear error msg first
+    this.confirmPasswordErrorMessage = undefined
     // Check for user object
     if (this.user) {
       if (this.user.confirmPassword !== this.user.password) { // compare password
